@@ -80,6 +80,7 @@ cmake-build-debug/CMakeFiles/rules.ninja
 cmake-build-debug/CMakeFiles/SeaLionCellDetection.dir/main.c.obj
 cmake-build-debug/CMakeFiles/TargetDirectories.txt
 cmake-build-debug/Testing/Temporary/LastTest.log
+cmake-build-debug/*
 *.cmake
 *.xml
 *.json
