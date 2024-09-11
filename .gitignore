@@ -1,3 +1,4 @@
-./cmake-build-debub.cmake/*
-./.idea/*
-./.vs/*
+cmake-build-debub.cmake/*
+.idea/*
+.vs/*
+main.exe
