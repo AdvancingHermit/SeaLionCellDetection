@@ -18,8 +18,8 @@ unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
 unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
 
 //Main function
-int main(int argc, char** argv)
-{
+int main(/*int argc, char** argv*/) {
+    /*
     //argc counts how may arguments are passed
     //argv[0] is a string with the name of the program
     //argv[1] is the first command line argument (input image)
@@ -32,16 +32,20 @@ int main(int argc, char** argv)
         exit(1);
     }
 
-    printf("Example program - 02132 - A1\n");
+    printf("Example program - 02132 - A1\n");*/
+
 
     //Load image from file
-    read_bitmap(argv[1], input_image);
 
-    //Run inversion
-    invert(input_image,output_image);
+    char input_path[] = "samples/impossible/1IMPOSSIBLE.bmp";
+    char output_path[] = "output/output.bmp";
+    read_bitmap(input_path, input_image);
+
+    greyscale(input_image, output_image);
 
     //Save image to file
-    write_bitmap(output_image, argv[2]);
+
+    write_bitmap(output_image, output_path);
 
     printf("Done!\n");
     return 0;
