@@ -15,7 +15,7 @@
 
 //Declaring the array to store the image (unsigned char = unsigned 8 bit)
 unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
-unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
+unsigned char gs_image[BMP_WIDTH][BMP_HEIGTH];
 
 //Main function
 int main(/*int argc, char** argv*/) {
@@ -37,15 +37,12 @@ int main(/*int argc, char** argv*/) {
 
     //Load image from file
 
-    char input_path[] = "samples/impossible/1IMPOSSIBLE.bmp";
+    char input_path[] = "samples/easy/1easy.bmp";
     char output_path[] = "output/output.bmp";
     read_bitmap(input_path, input_image);
-
-    greyscale(input_image, output_image);
-
+    greyscale(input_image, gs_image);
     //Save image to file
-
-    write_bitmap(output_image, output_path);
+    outputImage(gs_image, output_path);
 
     printf("Done!\n");
     return 0;
