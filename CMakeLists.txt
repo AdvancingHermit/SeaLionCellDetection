@@ -6,4 +6,5 @@ set(CMAKE_C_STANDARD 11)
 add_executable(SeaLionCellDetection main.c
         cbmp.c
         cbmp.h
-        dc.c)
+        dc.c
+        dc.h)

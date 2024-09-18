@@ -37,10 +37,20 @@ int main(/*int argc, char** argv*/) {
 
     //Load image from file
 
-    char input_path[] = "samples/easy/1easy.bmp";
+    char input_path[] = "samples/easy/3easy.bmp";
     char output_path[] = "output/output.bmp";
     read_bitmap(input_path, input_image);
+    //greyscale image
     greyscale(input_image, gs_image);
+
+    //erode image
+    int cellCount = 0;
+    for (int i = 25; i > 0; i--) {
+        erodeImage(gs_image);
+        detectCells(gs_image, &cellCount);
+    }
+
+    printf("%d", cellCount);
     //Save image to file
     outputImage(gs_image, output_path);
 
