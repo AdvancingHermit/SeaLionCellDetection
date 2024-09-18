@@ -75,8 +75,8 @@ void outputImage(unsigned char gs_image[BMP_WIDTH][BMP_HEIGTH], char *  output_f
 
 char exclusionFrame(unsigned char (*gs_image)[BMP_HEIGTH], int *x, int *y) {
 
-    int x_ = *x - HALF_AREA;
-    int y_ = *y - HALF_AREA;
+    int x_ = *x - HALF_AREA + 1;
+    int y_ = *y - HALF_AREA + 1;
     for (int i = 0;  i < HALF_AREA*2; i++) {
         if (gs_image[x_ + i][y_]) {
 
@@ -85,10 +85,10 @@ char exclusionFrame(unsigned char (*gs_image)[BMP_HEIGTH], int *x, int *y) {
         if (gs_image[x_][y_ + i]) {
             return 1;
         }
-        if (gs_image[x_ + i][y_ + HALF_AREA*2]) {
+        if (gs_image[x_ + i][y_ + HALF_AREA*2 -1]) {
             return 1;
         }
-        if (gs_image[x_ + HALF_AREA*2][y_ + i]) {
+        if (gs_image[x_ + HALF_AREA*2 - 1][y_ + i]) {
             return 1;
         }
     }
@@ -100,17 +100,17 @@ void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount){
     char whiteOnFrame = 0;
 
 
-    for (int x = HALF_AREA; x < BMP_WIDTH - HALF_AREA; x++)
+    for (int x = HALF_AREA-1; x < BMP_WIDTH - HALF_AREA; x++)
     {
-        for (int y = HALF_AREA; y < BMP_HEIGTH - HALF_AREA; y++)
+        for (int y = HALF_AREA-1; y < BMP_HEIGTH - HALF_AREA; y++)
         {
             whiteDetected = 0;
 
             if (exclusionFrame(gs_image, &x, &y)) {
                 continue;
             }
-            for (int k = (-HALF_AREA) ; k < HALF_AREA; k++) {
-                for (int j = (-HALF_AREA); j < HALF_AREA; j++) {
+            for (int k = (-HALF_AREA) + 2; k < HALF_AREA; k++) {
+                for (int j = (-HALF_AREA) + 2; j < HALF_AREA; j++) {
                     if (gs_image[x + k][y + j] == 1 ) {
                         whiteDetected = 1;
                     }
