@@ -61,6 +61,7 @@ void outputImage(unsigned char gs_image[BMP_WIDTH][BMP_HEIGTH], char *  output_f
         {
             if (gs_image[x][y] == 3) {
                 output_image[x][y][0] = 255;
+                printf("AYYYY");
                 continue;
             }
             unsigned char color = gs_image[x][y] * 255;
@@ -95,10 +96,21 @@ char exclusionFrame(unsigned char (*gs_image)[BMP_HEIGTH], int *x, int *y) {
 
     return 0;
 }
+
+struct intPair {
+    int first;
+    int second;
+};
+
 void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount){
     char whiteDetected = 0;
     char whiteOnFrame = 0;
+    int lowK = 1000;
+    int highK = 0;
+    int lowJ = 1000;
+    int highJ = 0;
 
+    struct intPair centers[350];
 
     for (int x = HALF_AREA-1; x < BMP_WIDTH - HALF_AREA; x++)
     {
@@ -113,16 +125,43 @@ void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount){
                 for (int j = (-HALF_AREA) + 2; j < HALF_AREA; j++) {
                     if (gs_image[x + k][y + j] == 1 ) {
                         whiteDetected = 1;
+                        if (k > highK) {
+                            highK = k;
+                        }
+                        else if (k < lowK) {
+                            lowK = k;
+                        }
+                        if (j > highJ) {
+                            highJ = j;
+                        }
+                        else if (j < lowJ) {
+                            lowJ = j;
+                        }
                     }
                     gs_image[x + k][y + j] = 0;
                 }
             }
             if (whiteDetected == 1) {
-                printf("x: %d", x);
-                printf("y: %d \n", y);
+
+                int midX = x + (lowK + highK)/2;
+                int midY = y + (lowJ + highJ)/2;
+
+
+                centers[*cellCount].first = midX;
+                centers[*cellCount].second = midY;
+
                 (*cellCount)++;
+
+                lowK = 1000;
+                highK = 0;
+                lowJ = 1000;
+                highJ = 0;
             }
         }
+    }
+    for (int i = 0; i < *cellCount; i++) {
+        printf("(%u, %u), ", centers[i].first, centers[i].second);
+        gs_image[centers[i].first][centers[i].second] = 3;
     }
 }
 
