@@ -1,3 +1,0 @@
-C:/Users/Christian/Desktop/SeaLionCellDetection/cmake-build-debug/CMakeFiles/SeaLionCellDetection.dir
-C:/Users/Christian/Desktop/SeaLionCellDetection/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/Christian/Desktop/SeaLionCellDetection/cmake-build-debug/CMakeFiles/rebuild_cache.dir

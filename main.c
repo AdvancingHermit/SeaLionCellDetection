@@ -1,7 +1,7 @@
 //To compile (linux/mac): gcc cbmp.c main.c -o main.out -std=c99
 //To run (linux/mac): ./main.out example.bmp example_inv.bmp
 
-//To compile (win): gcc cbmp.c main.c -o main.exe -std=c99
+//To compile (win): gcc cbmp.c dc.c main.c -o main.exe -std=c99
 //To run (win): main.exe example.bmp example_inv.bmp
 
 #include <stdlib.h>
@@ -39,6 +39,9 @@ int main(/*int argc, char** argv*/) {
 
     char input_path[] = "samples/easy/3easy.bmp";
     char output_path[] = "output/output.bmp";
+    struct coordinate center[350];
+
+
     read_bitmap(input_path, input_image);
     //greyscale image
     greyscale(input_image, gs_image);
@@ -47,12 +50,12 @@ int main(/*int argc, char** argv*/) {
     int cellCount = 0;
     for (int i = 25; i > 0; i--) {
         erodeImage(gs_image);
-        detectCells(gs_image, &cellCount);
+        detectCells(gs_image, &cellCount, center);
     }
 
     printf("%d", cellCount);
     //Save image to file
-    outputImage(gs_image, output_path);
+    outputImage(input_image, output_path, center, &cellCount);
 
     printf("Done!\n");
     return 0;
