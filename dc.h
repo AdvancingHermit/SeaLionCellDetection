@@ -8,6 +8,13 @@ struct coordinate {
     int y;
 };
 
+
+
+
+
+void setInputImage(unsigned char inputImageGet[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]);
+unsigned char (*getInputImageDraw())[BMP_HEIGTH][BMP_CHANNELS];
+
 void greyscale(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS], unsigned char (*gs_image)[BMP_HEIGTH]);
 void erodeImage(unsigned char (*gs_image)[BMP_HEIGTH]); //gs = greyscaled.
 void outputImage(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],

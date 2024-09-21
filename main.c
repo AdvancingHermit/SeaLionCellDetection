@@ -37,14 +37,16 @@ int main(/*int argc, char** argv*/) {
 
     //Load image from file
 
-    char input_path[] = "samples/easy/3easy.bmp";
+    char input_path[] = "samples/impossible/1impossible.bmp";
     char output_path[] = "output/output.bmp";
-    struct coordinate center[350];
+    struct coordinate center[1000];
 
 
     read_bitmap(input_path, input_image);
     //greyscale image
     greyscale(input_image, gs_image);
+
+    setInputImage(input_image);
 
     //erode image
     int cellCount = 0;
@@ -55,7 +57,7 @@ int main(/*int argc, char** argv*/) {
 
     printf("%d", cellCount);
     //Save image to file
-    outputImage(input_image, output_path, center, &cellCount);
+    outputImage(getInputImageDraw(), output_path, center, &cellCount);
 
     printf("Done!\n");
     return 0;

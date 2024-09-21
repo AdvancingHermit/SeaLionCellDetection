@@ -1,9 +1,27 @@
 #include "dc.h"
 #include <stdio.h>
-
+#include <string.h>
 
 
 unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
+
+unsigned char inputImageDraw[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
+
+void setInputImage(unsigned char inputImageGet[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]) {
+    for (int i = 0; i < BMP_WIDTH; i++) {
+        for (int j = 0; j < BMP_HEIGTH; j++) {
+            for (int k = 0; k < BMP_CHANNELS; k++) {
+                inputImageDraw[i][j][k] = inputImageGet[i][j][k];
+            }
+        }
+    }
+}
+
+unsigned char (*getInputImageDraw())[BMP_HEIGTH][BMP_CHANNELS] {
+    return inputImageDraw;
+}
+
+
 
 void greyscale(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],
                unsigned char (*gs_image)[BMP_HEIGTH]){
@@ -35,6 +53,9 @@ void erodeImage(unsigned char (*gs_image)[BMP_HEIGTH]){
                 continue;
             }
             if (gs_image[i][j] == 3) {
+                continue;
+            }
+            if (!gs_image[i][j]) {
                 continue;
             }
             gs_image[i][j] = 2;
@@ -102,6 +123,16 @@ void outputImage(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],
 
 } // Used at the end of detect cells, to output image with crosses
 
+void inclusionFrameDrawer(unsigned char (*inputImage)[BMP_HEIGTH][BMP_CHANNELS], int x, int y, int jBreak, int kBreak) {
+    for (int k = (-HALF_AREA) + 2; k < HALF_AREA; k++) {
+        for (int j = (-HALF_AREA) + 2; j < HALF_AREA; j++) {
+            inputImageDraw[(x + k)][(y + j)][0] = 0;
+            inputImageDraw[(x + k)][(y + j)][1] = 250;
+            inputImageDraw[(x + k)][(y + j)][2] = 0;
+        }
+    }
+}
+
 char exclusionFrame(unsigned char (*gs_image)[BMP_HEIGTH], int *x, int *y) {
 
     int x_ = *x - HALF_AREA + 1;
@@ -134,32 +165,44 @@ void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, struct c
     int highJ = 0;
 
 
+    int kBreakCounter[(HALF_AREA - 1) * 2];
+    int jBreakCounter = 0;
+    int kBreak = HALF_AREA;
+    int jBreak = HALF_AREA;
+
+
     for (int x = HALF_AREA-1; x < BMP_WIDTH - HALF_AREA; x++)
     {
         for (int y = HALF_AREA-1; y < BMP_HEIGTH - HALF_AREA; y++)
         {
             whiteDetected = 0;
+            memset(kBreakCounter, 0, sizeof(kBreakCounter)); // Clears values in arr with 0, very nice!
+            jBreak = HALF_AREA;
 
             if (exclusionFrame(gs_image, &x, &y)) {
                 continue;
             }
             for (int k = (-HALF_AREA) + 2; k < HALF_AREA; k++) {
+                jBreakCounter = 0;
+                if (k >= jBreak) {
+                    //continue;
+                }
                 for (int j = (-HALF_AREA) + 2; j < HALF_AREA; j++) {
                     if (gs_image[x + k][y + j] == 1 ) {
                         whiteDetected = 1;
-                        if (k > highK) {
-                            highK = k;
-                        }
-                        else if (k < lowK) {
-                            lowK = k;
-                        }
-                        if (j > highJ) {
-                            highJ = j;
-                        }
-                        else if (j < lowJ) {
-                            lowJ = j;
-                        }
                     }
+                    /*
+                    else if(whiteDetected){
+                        jBreakCounter++;
+                        kBreakCounter[j] = kBreakCounter[j] + 1;
+
+                        if (kBreakCounter[j] == (HALF_AREA - 1) * 2) {
+                            kBreak = j;
+                        }
+                        if (jBreakCounter == (HALF_AREA - 1) * 2) {
+                            jBreak = k;
+                        }
+                    }*/
                     gs_image[x + k][y + j] = 0;
                 }
             }
@@ -171,6 +214,9 @@ void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, struct c
 
                 centers[*cellCount].x = x + HALF_AREA;
                 centers[*cellCount].y = y + HALF_AREA;
+
+                inclusionFrameDrawer(inputImageDraw, x, y, jBreak, kBreak);
+
 
                 (*cellCount)++;
 
