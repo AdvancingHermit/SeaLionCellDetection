@@ -6,6 +6,7 @@
 unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
 
 unsigned char inputImageDraw[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
+unsigned char inputImageDrawRem[BMP_WIDTH][BMP_HEIGTH];
 
 void setInputImage(unsigned char inputImageGet[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]) {
     for (int i = 0; i < BMP_WIDTH; i++) {
@@ -113,10 +114,10 @@ void outputImage(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],
     for (int j = 0; j < *cellCount; j++) {
         corner.x = max(centers[j].x - 9, 0);
         corner.y = max(centers[j].y - 9,0);
-        set_color(input_image, red, sizeof(red) / sizeof(red[0]), 255, 0, 0, corner.x, corner.y);
-        set_color(input_image, blue, sizeof(blue) / sizeof(blue[0]), 0, 0, 255, corner.x, corner.y);
-        set_color(input_image, black, sizeof(black) / sizeof(black[0]), 0, 0, 0, corner.x, corner.y);
-        //set_color(input_image, centers, *cellCount, 0, 255, 0, 0, 0);
+        //set_color(input_image, red, sizeof(red) / sizeof(red[0]), 255, 0, 0, corner.x, corner.y);
+        //set_color(input_image, blue, sizeof(blue) / sizeof(blue[0]), 0, 0, 255, corner.x, corner.y);
+        //set_color(input_image, black, sizeof(black) / sizeof(black[0]), 0, 0, 0, corner.x, corner.y);
+        set_color(input_image, centers, *cellCount, 0, 0, 255, 0, 0);
     }
 
     write_bitmap(input_image, output_file_path);
@@ -124,8 +125,11 @@ void outputImage(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],
 } // Used at the end of detect cells, to output image with crosses
 
 void inclusionFrameDrawer(unsigned char (*inputImage)[BMP_HEIGTH][BMP_CHANNELS], int x, int y, int jBreak, int kBreak) {
-    for (int k = (-HALF_AREA) + 2; k < HALF_AREA; k++) {
-        for (int j = (-HALF_AREA) + 2; j < HALF_AREA; j++) {
+    if (jBreak == HALF_AREA && kBreak == HALF_AREA) {
+        return;
+    }
+    for (int k = (-HALF_AREA) + 2; k < jBreak; k++) {
+        for (int j = (-HALF_AREA) + 2; j < kBreak; j++) {
             inputImageDraw[(x + k)][(y + j)][0] = 0;
             inputImageDraw[(x + k)][(y + j)][1] = 250;
             inputImageDraw[(x + k)][(y + j)][2] = 0;
@@ -158,17 +162,12 @@ char exclusionFrame(unsigned char (*gs_image)[BMP_HEIGTH], int *x, int *y) {
 
 void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, struct coordinate centers[]){
     char whiteDetected = 0;
-    char whiteOnFrame = 0;
-    int lowK = 1000;
-    int highK = 0;
-    int lowJ = 1000;
-    int highJ = 0;
-
 
     int kBreakCounter[(HALF_AREA - 1) * 2];
     int jBreakCounter = 0;
-    int kBreak = HALF_AREA;
-    int jBreak = HALF_AREA;
+    int kBreak = HALF_AREA; // Explains which horizontal line has no whites after white detected
+    int jBreak = HALF_AREA; // Explains which vertical line has no whites after white detected
+    int forKBreak;
 
 
     for (int x = HALF_AREA-1; x < BMP_WIDTH - HALF_AREA; x++)
@@ -176,7 +175,7 @@ void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, struct c
         for (int y = HALF_AREA-1; y < BMP_HEIGTH - HALF_AREA; y++)
         {
             whiteDetected = 0;
-            memset(kBreakCounter, 0, sizeof(kBreakCounter)); // Clears values in arr with 0, very nice!
+            memset(kBreakCounter, 0, sizeof kBreakCounter); // Clears values in arr with 0, very nice!
             jBreak = HALF_AREA;
 
             if (exclusionFrame(gs_image, &x, &y)) {
@@ -185,45 +184,39 @@ void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, struct c
             for (int k = (-HALF_AREA) + 2; k < HALF_AREA; k++) {
                 jBreakCounter = 0;
                 if (k >= jBreak) {
-                    //continue;
+                    break;
                 }
                 for (int j = (-HALF_AREA) + 2; j < HALF_AREA; j++) {
+                    if (j >= kBreak) {
+                        break;
+                    }
                     if (gs_image[x + k][y + j] == 1 ) {
                         whiteDetected = 1;
                     }
-                    /*
                     else if(whiteDetected){
                         jBreakCounter++;
-                        kBreakCounter[j] = kBreakCounter[j] + 1;
+                        forKBreak = j + HALF_AREA - 2; // To make j align with valid indeks
+                        kBreakCounter[forKBreak] = kBreakCounter[forKBreak] + 1;
 
-                        if (kBreakCounter[j] == (HALF_AREA - 1) * 2) {
+                        if (kBreakCounter[forKBreak] == (HALF_AREA - 1) * 2 - 1) {
                             kBreak = j;
                         }
                         if (jBreakCounter == (HALF_AREA - 1) * 2) {
                             jBreak = k;
                         }
-                    }*/
+                    }
+                    inputImageDrawRem[x + k][y + j] = gs_image[x + k][y + j];
                     gs_image[x + k][y + j] = 0;
                 }
             }
             if (whiteDetected == 1) {
-
-                int midX = x + (lowK + highK)/2;
-                int midY = y + (lowJ + highJ)/2;
-
 
                 centers[*cellCount].x = x + HALF_AREA;
                 centers[*cellCount].y = y + HALF_AREA;
 
                 inclusionFrameDrawer(inputImageDraw, x, y, jBreak, kBreak);
 
-
                 (*cellCount)++;
-
-                lowK = 1000;
-                highK = 0;
-                lowJ = 1000;
-                highJ = 0;
             }
         }
     }
