@@ -37,19 +37,24 @@ int main(/*int argc, char** argv*/) {
 
     //Load image from file
 
-    char input_path[] = "samples/easy/3easy.bmp";
+    char input_path[] = "samples/impossible/1impossible.bmp";
     char output_path[] = "output/output.bmp";
+    char gs_output_path[] = "output/output_gs.bmp";
     struct coordinate center[1000];
 
 
     read_bitmap(input_path, input_image);
     //greyscale image
+
     greyscale(input_image, gs_image);
 
-    setInputImage(input_image);
-
+    removeCells(gs_image, 10);
     //erode image
+
+    outputGSImage(gs_image, gs_output_path);
+
     int cellCount = 0;
+
     for (int i = 25; i > 0; i--) {
         erodeImage(gs_image);
         detectCells(gs_image, &cellCount, center);
@@ -57,7 +62,7 @@ int main(/*int argc, char** argv*/) {
 
     printf("%d", cellCount);
     //Save image to file
-    outputImage(getInputImageDraw(), output_path, center, &cellCount);
+    //outputImage(input_image, output_path, center, &cellCount);
 
     printf("Done!\n");
     return 0;
