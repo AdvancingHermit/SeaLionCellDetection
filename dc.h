@@ -1,6 +1,9 @@
 #ifndef DC_H
 #define DC_H
 #define HALF_AREA 7
+#define SPLIT_CELL_SIZE 40
+#define HALF_SPLIT_CELL_SIZE 20
+#define THRESHOLD 90
 #include "cbmp.h"
 
 struct coordinate {

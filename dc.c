@@ -25,21 +25,39 @@ unsigned char (*getInputImageDraw())[BMP_HEIGTH][BMP_CHANNELS] {
 
 void greyscale(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],
                unsigned char (*gs_image)[BMP_HEIGTH]){
-    unsigned char THRESHOLD = 90;
     unsigned char white[] = {255, 255, 255};
     unsigned char black = 0;
+
+    int consecutiveWhitesX[BMP_HEIGTH];
+    int consecutiveWhitesY = 0;
+
     for (int x = 0; x < BMP_WIDTH; x++)
     {
+        consecutiveWhitesY = 0;
         for (int y = 0; y < BMP_HEIGTH; y++)
         {
             if (input_image[x][y][0] > THRESHOLD) {
+                consecutiveWhitesY++;
+                consecutiveWhitesX[y] = consecutiveWhitesX[y] + 1;
 
+                if (consecutiveWhitesY >= SPLIT_CELL_SIZE) {
+                    printf("%u \n", y - HALF_SPLIT_CELL_SIZE);
+                    input_image[x][y - HALF_SPLIT_CELL_SIZE][0] = 255;
+                    gs_image[x][y - HALF_SPLIT_CELL_SIZE] = 0;
+                    continue;
+                }
+                if (consecutiveWhitesX[y] >= SPLIT_CELL_SIZE) {
+                    printf("%u \n", x - HALF_SPLIT_CELL_SIZE);
+                    input_image[x - HALF_SPLIT_CELL_SIZE][y][1] = 255;
+                    gs_image[x - HALF_SPLIT_CELL_SIZE][y] = 0;
+                    continue;
+                }
                 gs_image[x][y] = 1;
-
             } else {
+                consecutiveWhitesX[y] = 0;
+                consecutiveWhitesY = 0;
                 gs_image[x][y] = 0;
             }
-
             if (!x || !y || x == BMP_WIDTH-1 || y == BMP_HEIGTH-1) {
                 gs_image[x][y] = 0;
             }
@@ -112,11 +130,11 @@ void outputImage(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],
     struct coordinate corner;
     for (int j = 0; j < *cellCount; j++) {
         corner.x = max(centers[j].x - 9, 0);
-        corner.y = max(centers[j].y - 9,0);
+        corner.y = max(centers[j].y - 9,0); /*
         set_color(input_image, red, sizeof(red) / sizeof(red[0]), 255, 0, 0, corner.x, corner.y);
         set_color(input_image, blue, sizeof(blue) / sizeof(blue[0]), 0, 0, 255, corner.x, corner.y);
         set_color(input_image, black, sizeof(black) / sizeof(black[0]), 0, 0, 0, corner.x, corner.y);
-        //set_color(input_image, centers, *cellCount, 0, 255, 0, 0, 0);
+        //set_color(input_image, centers, *cellCount, 0, 255, 0, 0, 0);*/
     }
 
     write_bitmap(input_image, output_file_path);
@@ -159,71 +177,32 @@ char exclusionFrame(unsigned char (*gs_image)[BMP_HEIGTH], int *x, int *y) {
 void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, struct coordinate centers[]){
     char whiteDetected = 0;
     char whiteOnFrame = 0;
-    int lowK = 1000;
-    int highK = 0;
-    int lowJ = 1000;
-    int highJ = 0;
-
-
-    int kBreakCounter[(HALF_AREA - 1) * 2];
-    int jBreakCounter = 0;
-    int kBreak = HALF_AREA;
-    int jBreak = HALF_AREA;
-
 
     for (int x = HALF_AREA-1; x < BMP_WIDTH - HALF_AREA; x++)
     {
         for (int y = HALF_AREA-1; y < BMP_HEIGTH - HALF_AREA; y++)
         {
             whiteDetected = 0;
-            memset(kBreakCounter, 0, sizeof(kBreakCounter)); // Clears values in arr with 0, very nice!
-            jBreak = HALF_AREA;
 
             if (exclusionFrame(gs_image, &x, &y)) {
                 continue;
             }
             for (int k = (-HALF_AREA) + 2; k < HALF_AREA; k++) {
-                jBreakCounter = 0;
-                if (k >= jBreak) {
-                    //continue;
-                }
                 for (int j = (-HALF_AREA) + 2; j < HALF_AREA; j++) {
                     if (gs_image[x + k][y + j] == 1 ) {
                         whiteDetected = 1;
                     }
-                    /*
-                    else if(whiteDetected){
-                        jBreakCounter++;
-                        kBreakCounter[j] = kBreakCounter[j] + 1;
-
-                        if (kBreakCounter[j] == (HALF_AREA - 1) * 2) {
-                            kBreak = j;
-                        }
-                        if (jBreakCounter == (HALF_AREA - 1) * 2) {
-                            jBreak = k;
-                        }
-                    }*/
                     gs_image[x + k][y + j] = 0;
                 }
             }
             if (whiteDetected == 1) {
 
-                int midX = x + (lowK + highK)/2;
-                int midY = y + (lowJ + highJ)/2;
-
-
                 centers[*cellCount].x = x + HALF_AREA;
                 centers[*cellCount].y = y + HALF_AREA;
 
-                inclusionFrameDrawer(inputImageDraw, x, y, jBreak, kBreak);
-
+                inclusionFrameDrawer(inputImageDraw, x, y, HALF_AREA, HALF_AREA);
 
                 (*cellCount)++;
-
-                lowK = 1000;
-                highK = 0;
-                lowJ = 1000;
-                highJ = 0;
             }
         }
     }

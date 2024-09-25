@@ -37,7 +37,7 @@ int main(/*int argc, char** argv*/) {
 
     //Load image from file
 
-    char input_path[] = "samples/impossible/1impossible.bmp";
+    char input_path[] = "samples/easy/3easy.bmp";
     char output_path[] = "output/output.bmp";
     struct coordinate center[1000];
 
