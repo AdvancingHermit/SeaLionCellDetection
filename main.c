@@ -37,7 +37,10 @@ int main(/*int argc, char** argv*/) {
 
     //Load image from file
 
-    char input_path[] = "samples/impossible/1impossible.bmp";
+   // char input_path[] = "samples/easy/3easy.bmp";
+   // char input_path[] = "samples/impossible/1impossible.bmp";
+   char input_path[] = "samples/medium/1medium.bmp";
+
     char output_path[] = "output/output.bmp";
     struct coordinate center[1000];
 
@@ -49,10 +52,12 @@ int main(/*int argc, char** argv*/) {
     setInputImage(input_image);
 
     //erode image
+    splitCells(gs_image);
     int cellCount = 0;
-    for (int i = 25; i > 0; i--) {
+    for (int i = 35; i > 0; i--) {
         erodeImage(gs_image);
         detectCells(gs_image, &cellCount, center);
+       // printf("%u", cellCount);
     }
 
     printf("%d", cellCount);
