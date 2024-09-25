@@ -122,6 +122,26 @@ void outputImage(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],
     write_bitmap(input_image, output_file_path);
 
 } // Used at the end of detect cells, to output image with crosses
+void outputGSImage(unsigned char (*gs_image)[BMP_HEIGTH],
+                    char*  output_file_path){
+
+    for (int x = 0; x < BMP_WIDTH; x++) {
+        for (int y = 0; y < BMP_WIDTH; y++) {
+            if (gs_image[x][y] == 3) {
+                output_image[x][y][2] = 255;
+                continue;
+            }
+            for (int c = 0; c < BMP_CHANNELS; c++) {
+
+                output_image[x][y][c] = gs_image[x][y] * 255;
+            }
+        }
+    }
+
+    write_bitmap(output_image, output_file_path);
+
+}
+
 
 void inclusionFrameDrawer(unsigned char (*inputImage)[BMP_HEIGTH][BMP_CHANNELS], int x, int y, int jBreak, int kBreak) {
     for (int k = (-HALF_AREA) + 2; k < HALF_AREA; k++) {
@@ -159,76 +179,37 @@ char exclusionFrame(unsigned char (*gs_image)[BMP_HEIGTH], int *x, int *y) {
 void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, struct coordinate centers[]){
     char whiteDetected = 0;
     char whiteOnFrame = 0;
-    int lowK = 1000;
-    int highK = 0;
-    int lowJ = 1000;
-    int highJ = 0;
-
-
-    int kBreakCounter[(HALF_AREA - 1) * 2];
-    int jBreakCounter = 0;
-    int kBreak = HALF_AREA;
-    int jBreak = HALF_AREA;
-
 
     for (int x = HALF_AREA-1; x < BMP_WIDTH - HALF_AREA; x++)
     {
         for (int y = HALF_AREA-1; y < BMP_HEIGTH - HALF_AREA; y++)
         {
             whiteDetected = 0;
-            memset(kBreakCounter, 0, sizeof(kBreakCounter)); // Clears values in arr with 0, very nice!
-            jBreak = HALF_AREA;
 
             if (exclusionFrame(gs_image, &x, &y)) {
                 continue;
             }
             for (int k = (-HALF_AREA) + 2; k < HALF_AREA; k++) {
-                jBreakCounter = 0;
-                if (k >= jBreak) {
-                    //continue;
-                }
                 for (int j = (-HALF_AREA) + 2; j < HALF_AREA; j++) {
-                    if (gs_image[x + k][y + j] == 1 ) {
+                    if (gs_image[x + k][y + j] == 1) {
                         whiteDetected = 1;
                     }
-                    /*
-                    else if(whiteDetected){
-                        jBreakCounter++;
-                        kBreakCounter[j] = kBreakCounter[j] + 1;
-
-                        if (kBreakCounter[j] == (HALF_AREA - 1) * 2) {
-                            kBreak = j;
-                        }
-                        if (jBreakCounter == (HALF_AREA - 1) * 2) {
-                            jBreak = k;
-                        }
-                    }*/
                     gs_image[x + k][y + j] = 0;
                 }
             }
             if (whiteDetected == 1) {
 
-                int midX = x + (lowK + highK)/2;
-                int midY = y + (lowJ + highJ)/2;
+                centers[*cellCount].x = x;
+                centers[*cellCount].y = y;
 
-
-                centers[*cellCount].x = x + HALF_AREA;
-                centers[*cellCount].y = y + HALF_AREA;
-
-                inclusionFrameDrawer(inputImageDraw, x, y, jBreak, kBreak);
-
+                inclusionFrameDrawer(inputImageDraw, x, y, HALF_AREA, HALF_AREA);
 
                 (*cellCount)++;
-
-                lowK = 1000;
-                highK = 0;
-                lowJ = 1000;
-                highJ = 0;
             }
         }
     }
     for (int i = 0; i < *cellCount; i++) {
-        gs_image[centers[i].y][centers[i].y] = 3;
+        gs_image[centers[i].x][centers[i].y] = 3;
     }
 }
 
