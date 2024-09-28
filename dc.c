@@ -155,11 +155,11 @@ void inclusionFrameDrawer(unsigned char (*inputImage)[BMP_HEIGTH][BMP_CHANNELS],
     }
 }
 
-char exclusionFrame(unsigned char (*gs_image)[BMP_HEIGTH], int *x, int *y) {
+char exclusionFrame(unsigned char (*gs_image)[BMP_HEIGTH], int *x, int *y, char area) {
 
-    int x_ = *x - HALF_AREA + 1;
-    int y_ = *y - HALF_AREA + 1;
-    for (int i = 0;  i < HALF_AREA*2; i++) {
+    int x_ = *x - area + 1;
+    int y_ = *y - area + 1;
+    for (int i = 0;  i < area*2; i++) {
         if (gs_image[x_ + i][y_]) {
 
             return 1;
@@ -167,16 +167,18 @@ char exclusionFrame(unsigned char (*gs_image)[BMP_HEIGTH], int *x, int *y) {
         if (gs_image[x_][y_ + i]) {
             return 1;
         }
-        if (gs_image[x_ + i][y_ + HALF_AREA*2 -1]) {
+        if (gs_image[x_ + i][y_ + area*2 -1]) {
             return 1;
         }
-        if (gs_image[x_ + HALF_AREA*2 - 1][y_ + i]) {
+        if (gs_image[x_ + area*2 - 1][y_ + i]) {
             return 1;
         }
     }
 
     return 0;
 }
+
+
 
 void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, struct coordinate centers[]){
     char whiteDetected = 0;
@@ -187,7 +189,7 @@ void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, struct c
         {
             whiteDetected = 0;
 
-            if (exclusionFrame(gs_image, &x, &y)) {
+            if (exclusionFrame(gs_image, &x, &y, HALF_AREA)) {
                 continue;
             }
             for (int k = (-HALF_AREA) + 2; k < HALF_AREA; k++) {
@@ -213,4 +215,81 @@ void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, struct c
         gs_image[centers[i].x][centers[i].y] = 3;
     }
 }
+void splitCellsExclusionFrame(unsigned char (*gs_image)[BMP_HEIGTH], int *x, int *y ) {
+    int x_ = *x - HALF_AREA + 1;
+    int y_ = *y - HALF_AREA + 1;
+    for (int i = 0;  i < HALF_AREA*2; i++) {
+        if (gs_image[x_ + i][y_]) {
+
+            gs_image[x_ + i][y_] = 0;
+        }
+        if (gs_image[x_][y_ + i]) {
+            gs_image[x_][y_ + i] = 0;
+        }
+        if (gs_image[x_ + i][y_ + HALF_AREA*2 -1]) {
+            gs_image[x_ + i][y_ + HALF_AREA*2 -1] = 0;
+        }
+        if (gs_image[x_ + HALF_AREA*2 - 1][y_ + i]) {
+            gs_image[x_ + HALF_AREA*2 - 1][y_ + i] = 0;
+        }
+    }
+
+}
+void removeIslands(unsigned char (*gs_image)[BMP_HEIGTH]) {
+    for (int i = 0; i<4; i++) {
+        erodeImage(gs_image);
+    }
+
+    char whiteDetected = 0;
+    char area = HALF_AREA-5;
+    for (int x = area-1; x < BMP_WIDTH - area; x++)
+    {
+        for (int y = area-1; y < BMP_HEIGTH - area; y++)
+        {
+            whiteDetected = 0;
+            if (exclusionFrame(gs_image, &x, &y, area)) {
+                continue;
+            }
+            for (int k = (-area) + 2; k < area; k++) {
+                for (int j = (-area) + 2; j < area; j++) {
+                    if (gs_image[x + k][y + j] == 1 ) {
+                        whiteDetected = 1;
+                    }
+                    gs_image[x + k][y + j] = 0;
+                }
+            }
+        }
+    }
+
+
+}
+
+void splitCells(unsigned char (*gs_image)[BMP_HEIGTH]){
+  //  char numberOfWhites = 0;
+    char onlyWhite = 1;
+    char area = HALF_AREA+2;
+    for (int x = area-1; x < BMP_WIDTH - area; x++)
+    {
+        for (int y = area-1; y < BMP_HEIGTH - area; y++)
+        {
+          //  numberOfWhites = 0;
+            onlyWhite = 1;
+            for (int k = (-area) + 2; k < area; k++) {
+                for (int j = (-area) + 2; j < area; j++) {
+                    if (gs_image[x + k][y + j] == 0) {
+                        //numberOfWhites++;
+                        onlyWhite = 0;
+                    }
+                }
+            }
+            if (onlyWhite) {
+                splitCellsExclusionFrame(gs_image, &x, &y);
+            }
+        }
+    }
+    removeIslands(gs_image);
+
+
+}
+
 

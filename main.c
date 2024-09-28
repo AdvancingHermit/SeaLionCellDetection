@@ -50,6 +50,9 @@ int main(/*int argc, char** argv*/) {
 
     //Load image from file
 
+   // char input_path[] = "samples/easy/3easy.bmp";
+   // char input_path[] = "samples/impossible/1impossible.bmp";
+//   char input_path[] = "samples/medium/1medium.bmp";
     char input_path[] = "samples/easy/9easy.bmp";
     char output_path[] = "output/output.bmp";
     char gs_output_path[] = "output/output_gs.bmp";
@@ -72,10 +75,10 @@ int main(/*int argc, char** argv*/) {
 
         //erode image
         int cellCount = 0;
+        splitCells(gs_image);
         char done = 0;
         while (!done) {
             erodeImage(gs_image, &done);
-
             detectCells(gs_image, &cellCount, center);
         }
         //outputGSImage(gs_image, gs_output_path);
@@ -85,6 +88,5 @@ int main(/*int argc, char** argv*/) {
         outputImage(getInputImageDraw(), output_path, center, &cellCount);
         printf("Done!\n");
     }
-
     return 0;
 }

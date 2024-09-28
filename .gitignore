@@ -1,6 +1,8 @@
 cmake-build-debug/
+output/
 .idea/
 .vs/
 main.exe
 main.out
 abe.bat
+CMakeLists.txt
