@@ -8,8 +8,20 @@
 #include <stdio.h>
 #include "cbmp.h"
 #include "dc.h"
+#include <time.h>
+
+#ifdef ENABLE_TIMING
+    #define START_TIMER clock_t start = clock();
+    #define END_TIMER \
+    clock_t end = clock(); \
+    printf("Time taken: %f ms\n", (double)(end - start) * 1000.0 / CLOCKS_PER_SEC);
+#else
+    #define START_TIMER
+    #define END_TIMER
+#endif
 
 
+#include <string.h>
 
 
 
@@ -19,6 +31,7 @@ unsigned char gs_image[BMP_WIDTH][BMP_HEIGTH];
 
 //Main function
 int main(/*int argc, char** argv*/) {
+
     /*
     //argc counts how may arguments are passed
     //argv[0] is a string with the name of the program
@@ -37,31 +50,41 @@ int main(/*int argc, char** argv*/) {
 
     //Load image from file
 
-    char input_path[] = "samples/impossible/1impossible.bmp";
+    char input_path[] = "samples/easy/9easy.bmp";
     char output_path[] = "output/output.bmp";
     char gs_output_path[] = "output/output_gs.bmp";
-    struct coordinate center[1000];
+    for (int i = 0; i < 1; i++) {
+        struct coordinate center[1000];
+        /*char str1[100] = "samples/impossible/";
+        char str2[20];
+        char str3[] = "impossible.bmp";
+        sprintf(str2, "%d", i+1);
+        strcat(str1, str2);
+        strcat(str1, str3);*/
 
+        read_bitmap( input_path, input_image);
 
-    read_bitmap(input_path, input_image);
-    //greyscale image
-    greyscale(input_image, gs_image);
-    //outputGSImage(gs_image, gs_output_path);
+        //greyscale image
+        //START_TIMER
+        greyscale(input_image, gs_image);
+        //END_TIMER
+        //outputGSImage(gs_image, gs_output_path);
 
-    setInputImage(input_image);
+        //erode image
+        int cellCount = 0;
+        char done = 0;
+        while (!done) {
+            erodeImage(gs_image, &done);
 
-    //erode image
-    int cellCount = 0;
-    for (int i = 5; i > 0; i--) {
-        erodeImage(gs_image);
-        detectCells(gs_image, &cellCount, center);
+            detectCells(gs_image, &cellCount, center);
+        }
+        //outputGSImage(gs_image, gs_output_path);
+
+        printf("%d", cellCount);
+        //Save image to file
+        outputImage(getInputImageDraw(), output_path, center, &cellCount);
+        printf("Done!\n");
     }
-    outputGSImage(gs_image, gs_output_path);
 
-    printf("%d", cellCount);
-    //Save image to file
-    outputImage(getInputImageDraw(), output_path, center, &cellCount);
-
-    printf("Done!\n");
     return 0;
 }

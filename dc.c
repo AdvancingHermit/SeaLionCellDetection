@@ -46,7 +46,8 @@ void greyscale(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],
         }
     }
 }
-void erodeImage(unsigned char (*gs_image)[BMP_HEIGTH]){
+void erodeImage(unsigned char (*gs_image)[BMP_HEIGTH], char* done){
+    *done = 1;
     for (int i = 1; i < BMP_WIDTH; i++) {
         for (int j = 1; j < BMP_HEIGTH; j++) {
             if(gs_image[i][j] && gs_image[i-1][j] && gs_image[i+1][j] && gs_image[i][j-1] && gs_image[i][j+1]) {
@@ -59,6 +60,7 @@ void erodeImage(unsigned char (*gs_image)[BMP_HEIGTH]){
                 continue;
             }
             gs_image[i][j] = 2;
+            *done = 0;
         }
 
     }
@@ -178,7 +180,6 @@ char exclusionFrame(unsigned char (*gs_image)[BMP_HEIGTH], int *x, int *y) {
 
 void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, struct coordinate centers[]){
     char whiteDetected = 0;
-    char whiteOnFrame = 0;
 
     for (int x = HALF_AREA-1; x < BMP_WIDTH - HALF_AREA; x++)
     {
@@ -202,7 +203,7 @@ void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, struct c
                 centers[*cellCount].x = x;
                 centers[*cellCount].y = y;
 
-                inclusionFrameDrawer(inputImageDraw, x, y, HALF_AREA, HALF_AREA);
+                //inclusionFrameDrawer(inputImageDraw, x, y, HALF_AREA, HALF_AREA);
 
                 (*cellCount)++;
             }
