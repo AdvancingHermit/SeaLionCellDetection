@@ -236,8 +236,9 @@ void splitCellsExclusionFrame(unsigned char (*gs_image)[BMP_HEIGTH], int *x, int
 
 }
 void removeIslands(unsigned char (*gs_image)[BMP_HEIGTH]) {
+    char temp = 0;
     for (int i = 0; i<4; i++) {
-        erodeImage(gs_image);
+        erodeImage(gs_image, &temp);
     }
 
     char whiteDetected = 0;
