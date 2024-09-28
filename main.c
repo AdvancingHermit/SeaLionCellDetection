@@ -39,7 +39,8 @@ int main(/*int argc, char** argv*/) {
 
    // char input_path[] = "samples/easy/3easy.bmp";
    // char input_path[] = "samples/impossible/1impossible.bmp";
-   char input_path[] = "samples/medium/1medium.bmp";
+//   char input_path[] = "samples/medium/1medium.bmp";
+    char input_path[] = "samples/hard/1hard.bmp";
 
     char output_path[] = "output/output.bmp";
     struct coordinate center[1000];
