@@ -1,5 +1,6 @@
 #include "dc.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 
@@ -46,10 +47,10 @@ void greyscale(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],
         }
     }
 }
-void erodeImage(unsigned char (*gs_image)[BMP_HEIGTH], char* done){
+void erodeImage(unsigned char (*gs_image)[BMP_HEIGTH], char* done, int dims[2], int offset[2]){
     *done = 1;
-    for (int i = 1; i < BMP_WIDTH; i++) {
-        for (int j = 1; j < BMP_HEIGTH; j++) {
+    for (int i = offset[0]; i < dims[0]; i++) {
+        for (int j = offset[1]; j < dims[1]; j++) {
             if(gs_image[i][j] && gs_image[i-1][j] && gs_image[i+1][j] && gs_image[i][j-1] && gs_image[i][j+1]) {
                 continue;
             }
@@ -64,8 +65,8 @@ void erodeImage(unsigned char (*gs_image)[BMP_HEIGTH], char* done){
         }
 
     }
-    for (int i = 1; i < BMP_WIDTH; i++) {
-        for (int j = 1; j < BMP_HEIGTH; j++) {
+    for (int i = offset[0]; i < dims[0]; i++) {
+        for (int j = offset[1]; j < dims[1]; j++) {
             if(gs_image[i][j] == 2) {
                 gs_image[i][j] = 0;
             }
@@ -235,27 +236,104 @@ void splitCellsExclusionFrame(unsigned char (*gs_image)[BMP_HEIGTH], int *x, int
     }
 
 }
-void removeIslands(unsigned char (*gs_image)[BMP_HEIGTH]) {
+typedef struct {
+    struct coordinate top;
+    struct coordinate btm;
+} Square;
+char hasOverlap(Square a, Square b) {
+    if (a.top.x >= b.btm.x || b.top.x >= a.btm.x)
+        return 0;
+
+    // Check if one square is above or below the other
+    if (a.btm.y <= b.top.y || b.btm.y <= a.top.y)
+        return 0;
+
+    return 1;  // They overlap
+}
+// Function to merge two overlapping squares
+Square merge(Square a, Square b) {
+    Square merged;
+    merged.top.x = (a.top.x < b.top.x) ? a.top.x : b.top.x;
+    merged.top.y = (a.top.y < b.top.y) ? a.top.y : b.top.y;
+    merged.btm.x = (a.btm.x > b.btm.x) ? a.btm.x : b.btm.x;
+    merged.btm.y = (a.btm.y > b.btm.y ) ? a.btm.y : b.btm.y;
+    return merged;
+}
+int removeOverlaps(Square squares[], int n) {
+    char merged = 1; // Variable to check if any merges happened
+    while (merged) { // Loop until no more merges
+        merged = 0; // Reset merged flag
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (hasOverlap(squares[i], squares[j])) {
+                    // Merge squares[i] and squares[j]
+                    squares[i] = merge(squares[i], squares[j]);
+
+                    // Shift elements to remove squares[j]
+                    for (int k = j; k < n - 1; k++) {
+                        squares[k] = squares[k + 1];
+                    }
+                    n--; // Reduce count of squares
+                    merged = 1; // A merge has occurred
+                    j--; // Check the same j again since it's now the next square
+                }
+            }
+        }
+    }
+    return n; // Return the new number of squares
+}
+
+void removeIslands(unsigned char (*gs_image)[BMP_HEIGTH], struct coordinate locations[], char * count) {
     char temp = 0;
-    for (int i = 0; i<4; i++) {
-        erodeImage(gs_image, &temp);
+    char checkCount = 0;
+    Square sqs[*count];
+    for (int i = 0; i < *count; i++) {
+        struct coordinate top = {max(locations[i].x - (HALF_AREA + 10), 0),
+                            max(locations[i].y - (HALF_AREA + 10), 0)};
+        struct coordinate btm = {min(locations[i].x + (HALF_AREA + 10), BMP_WIDTH),
+                                    min(locations[i].y + (HALF_AREA + 10), BMP_WIDTH)};
+        Square t = {top, btm};
+        sqs[i] = t;
+    }
+    checkCount = removeOverlaps(sqs, *count);
+    printf("%d \n", checkCount);
+    for (int i = 0; i < checkCount; i++) {
+        for (int j = 0; j < checkCount; j++) {
+            if (j == i) {
+                continue;
+            }
+            if(hasOverlap(sqs[i], sqs[j])) {
+                printf("overlap");
+            }
+        }
+        printf("%d %d %d %d \n", sqs[i].top.x, sqs[i].top.y, sqs[i].btm.x, sqs[i].btm.y);
     }
 
-    char whiteDetected = 0;
+
+    for (int i = 0; i < checkCount; i++) {
+        int dims[] = {sqs[i].btm.x, sqs[i].btm.y};
+        int offset[] = {sqs[i].top.x +1,sqs[i].top.y +1};
+        for (int j = 0; j < 4; j++) {
+            erodeImage(gs_image, &temp, dims, offset);
+        }
+    }
+    /*
+    int dims[] = {BMP_WIDTH, BMP_HEIGTH};
+    int offset[] = {1,1};
+    for (int i = 0; i<4; i++) {
+        erodeImage(gs_image, &temp, dims, offset);
+    }*/
+
     char area = HALF_AREA-5;
     for (int x = area-1; x < BMP_WIDTH - area; x++)
     {
         for (int y = area-1; y < BMP_HEIGTH - area; y++)
         {
-            whiteDetected = 0;
             if (exclusionFrame(gs_image, &x, &y, area)) {
                 continue;
             }
             for (int k = (-area) + 2; k < area; k++) {
                 for (int j = (-area) + 2; j < area; j++) {
-                    if (gs_image[x + k][y + j] == 1 ) {
-                        whiteDetected = 1;
-                    }
                     gs_image[x + k][y + j] = 0;
                 }
             }
@@ -269,6 +347,8 @@ void splitCells(unsigned char (*gs_image)[BMP_HEIGTH]){
   //  char numberOfWhites = 0;
     char onlyWhite = 1;
     char area = HALF_AREA+2;
+    struct coordinate locations[300];
+    char count = 0;
     for (int x = area-1; x < BMP_WIDTH - area; x++)
     {
         for (int y = area-1; y < BMP_HEIGTH - area; y++)
@@ -284,11 +364,14 @@ void splitCells(unsigned char (*gs_image)[BMP_HEIGTH]){
                 }
             }
             if (onlyWhite) {
+                struct coordinate loc = {x, y};
+                locations[count] = loc;
+                count++;
                 splitCellsExclusionFrame(gs_image, &x, &y);
             }
         }
     }
-    removeIslands(gs_image);
+    removeIslands(gs_image, locations, &count);
 
 
 }

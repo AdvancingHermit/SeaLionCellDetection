@@ -51,9 +51,9 @@ int main(/*int argc, char** argv*/) {
     //Load image from file
 
    // char input_path[] = "samples/easy/3easy.bmp";
-   // char input_path[] = "samples/impossible/1impossible.bmp";
-//   char input_path[] = "samples/medium/1medium.bmp";
-    char input_path[] = "samples/easy/9easy.bmp";
+   char input_path[] = "samples/impossible/1impossible.bmp";
+    //char input_path[] = "samples/medium/1medium.bmp";
+    //char input_path[] = "samples/easy/9easy.bmp";
     char output_path[] = "output/output.bmp";
     char gs_output_path[] = "output/output_gs.bmp";
     for (int i = 0; i < 1; i++) {
@@ -66,7 +66,7 @@ int main(/*int argc, char** argv*/) {
         strcat(str1, str3);*/
 
         read_bitmap( input_path, input_image);
-
+        setInputImage(input_image);
         //greyscale image
         //START_TIMER
         greyscale(input_image, gs_image);
@@ -77,8 +77,11 @@ int main(/*int argc, char** argv*/) {
         int cellCount = 0;
         splitCells(gs_image);
         char done = 0;
+        int dims[] = {BMP_WIDTH, BMP_HEIGTH};
+        int offset[] = {1, 1};
+
         while (!done) {
-            erodeImage(gs_image, &done);
+            erodeImage(gs_image, &done, dims, offset);
             detectCells(gs_image, &cellCount, center);
         }
         //outputGSImage(gs_image, gs_output_path);
