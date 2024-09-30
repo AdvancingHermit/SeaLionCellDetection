@@ -180,20 +180,20 @@ char exclusionFrame(unsigned char (*gs_image)[BMP_HEIGTH], int *x, int *y, char 
 
 
 
-void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, struct coordinate centers[]){
+void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, struct coordinate centers[], unsigned char area){
     char whiteDetected = 0;
 
-    for (int x = HALF_AREA-1; x < BMP_WIDTH - HALF_AREA; x++)
+    for (int x = area-1; x < BMP_WIDTH - area; x++)
     {
-        for (int y = HALF_AREA-1; y < BMP_HEIGTH - HALF_AREA; y++)
+        for (int y = area-1; y < BMP_HEIGTH - area; y++)
         {
             whiteDetected = 0;
 
-            if (exclusionFrame(gs_image, &x, &y, HALF_AREA)) {
+            if (exclusionFrame(gs_image, &x, &y, area)) {
                 continue;
             }
-            for (int k = (-HALF_AREA) + 2; k < HALF_AREA; k++) {
-                for (int j = (-HALF_AREA) + 2; j < HALF_AREA; j++) {
+            for (int k = (-area) + 2; k < area; k++) {
+                for (int j = (-area) + 2; j < area; j++) {
                     if (gs_image[x + k][y + j] == 1) {
                         whiteDetected = 1;
                     }
@@ -267,6 +267,7 @@ void removeIslands(unsigned char (*gs_image)[BMP_HEIGTH]) {
 
 void splitCells(unsigned char (*gs_image)[BMP_HEIGTH]){
   //  char numberOfWhites = 0;
+    char count = 0;
     char onlyWhite = 1;
     char area = HALF_AREA+2;
     for (int x = area-1; x < BMP_WIDTH - area; x++)
@@ -285,9 +286,12 @@ void splitCells(unsigned char (*gs_image)[BMP_HEIGTH]){
             }
             if (onlyWhite) {
                 splitCellsExclusionFrame(gs_image, &x, &y);
+                count++;
+
             }
         }
     }
+   // printf("%u \n",count);
     removeIslands(gs_image);
 
 

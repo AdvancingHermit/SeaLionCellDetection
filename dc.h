@@ -20,7 +20,7 @@ void erodeImage(unsigned char (*gs_image)[BMP_HEIGTH], char* done); //gs = greys
 void outputImage(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],
                     char* output_file_path,struct coordinate centers[],
                     int* cellCount);// Used at the end of detect cells, to output image with crosses
-void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount,  struct coordinate centers[]);
+void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount,  struct coordinate centers[], unsigned char area);
 void splitCells(unsigned char (*gs_image)[BMP_HEIGTH]);
 void outputGSImage(unsigned char (*gs_image)[BMP_HEIGTH],char*  output_file_path);
 
