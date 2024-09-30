@@ -53,20 +53,17 @@ int main(/*int argc, char** argv*/) {
    // char input_path[] = "samples/easy/3easy.bmp";
    // char input_path[] = "samples/impossible/1impossible.bmp";
 //   char input_path[] = "samples/medium/1medium.bmp";
-    char input_path[] = "samples/easy/9easy.bmp";
+    //char input_path[] = "samples/easy/9easy.bmp";
     char output_path[] = "output/output.bmp";
     char gs_output_path[] = "output/output_gs.bmp";
     for (int i = 0; i < 1; i++) {
         struct coordinate center[1000];
-        /*char str1[100] = "samples/impossible/";
+        char str1[100] = "samples/easy/";
         char str2[20];
-        char str3[] = "impossible.bmp";
         sprintf(str2, "%d", i+1);
         strcat(str1, str2);
-        strcat(str1, str3);*/
-
-        read_bitmap( input_path, input_image);
-
+        strcat(str1, "easy.bmp");
+        read_bitmap( str1, input_image);
         //greyscale image
         //START_TIMER
         greyscale(input_image, gs_image);
@@ -85,7 +82,7 @@ int main(/*int argc, char** argv*/) {
 
         printf("%d", cellCount);
         //Save image to file
-        outputImage(getInputImageDraw(), output_path, center, &cellCount);
+        outputImage(input_image, output_path, center, &cellCount);
         printf("Done!\n");
     }
     return 0;
