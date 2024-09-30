@@ -40,7 +40,7 @@ int main(/*int argc, char** argv*/) {
     char input_path[] = "samples/impossible/1impossible.bmp";
     char output_path[] = "output/output.bmp";
     char gs_output_path[] = "output/output_gs.bmp";
-    struct coordinate center[1000];
+    coordinate center[1000];
 
 
     read_bitmap(input_path, input_image);
@@ -48,7 +48,10 @@ int main(/*int argc, char** argv*/) {
 
     greyscale(input_image, gs_image);
 
-    removeCells(gs_image, 10);
+    //outputGSImage(gs_image, gs_output_path);
+
+
+    removeCells(gs_image, 20);
     //erode image
 
     outputGSImage(gs_image, gs_output_path);
@@ -62,7 +65,7 @@ int main(/*int argc, char** argv*/) {
 
     printf("%d", cellCount);
     //Save image to file
-    //outputImage(input_image, output_path, center, &cellCount);
+    outputImage(input_image, output_path, center, &cellCount);
 
     printf("Done!\n");
     return 0;

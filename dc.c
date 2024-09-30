@@ -10,29 +10,28 @@ void splitCells(unsigned char (*gs_image)[BMP_HEIGTH], int cellSize, int holeSiz
     int consecutiveWhitesX[BMP_HEIGTH] = {0};
     int consecutiveWhitesY = 0;
 
-    int conYCounter = 0;
-
     for (int x = 0; x < BMP_WIDTH; x++)
     {
         consecutiveWhitesY = 0;
-        conYCounter = 0;
         for (int y = 0; y < BMP_HEIGTH; y++)
         {
             if (gs_image[x][y] == 1) {
                 consecutiveWhitesY++;
                 consecutiveWhitesX[y] = consecutiveWhitesX[y] + 1;
-
                 if (consecutiveWhitesY >= cellSize * 1.5) {
-                    gs_image[x][y - cellSize] = 0;
-                    conYCounter++;
-                    if (conYCounter == holeSize) {
-                        conYCounter = 0;
-                        consecutiveWhitesY = cellSize - holeSize;
+                    consecutiveWhitesY = cellSize * 0.75;
+                    for (int i = -holeSize; i < holeSize; i++) {
+                        gs_image[x + i][y - (int)(cellSize * 0.5)] = 0;
                     }
                 }
                 if (consecutiveWhitesX[y] >= cellSize * 1.5) {
-                    if (consecutiveWhitesX[y] == cellSize * 1.5 + holeSize) {
-                        consecutiveWhitesX[y] = cellSize - holeSize;
+                    for (int i = -holeSize; i < holeSize; i++) {
+                        gs_image[x - (int)(cellSize * 0.5)][y + i] = 0;
+                    }
+                    for (int i = 0; i < cellSize; i++) {
+                        if (consecutiveWhitesX[y + i] > cellSize){
+                            consecutiveWhitesX[y + i] = cellSize * 0.75;
+                        }
                     }
                 }
             } else {
@@ -60,6 +59,10 @@ void greyscale(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],
                     if (y + j < 0 || y + j > BMP_HEIGTH - 1) {
                         continue;
                     }
+                    if(x + k == 0 || x + k == BMP_WIDTH - 1 || y + j == 0 || y + j == BMP_HEIGTH - 1) {
+                        nonWhiteCellCounter++;
+                        break;
+                    }
                     if (input_image[x + k][y + j][0] < THRESHOLD) {
                         nonWhiteCellCounter++;
                         break;
@@ -74,7 +77,7 @@ void greyscale(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],
             } else gs_image[x][y] = 0;
         }
     }
-    splitCells(gs_image, 20, 10);
+    splitCells(gs_image, 23, 15);
 }
 
 
@@ -114,7 +117,7 @@ int max(int a, int b) {
     return a > b ? a : b;
 }
 
-void set_color(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS], const struct coordinate* coords, int count, int r, int g, int b, int x_offset, int y_offset) {
+void set_color(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS], const coordinate* coords, int count, int r, int g, int b, int x_offset, int y_offset) {
     for (int i = 0; i < count; i++) {
         input_image[min(x_offset + coords[i].x, BMP_HEIGTH-1)][min(y_offset + coords[i].y, BMP_HEIGTH-1)][0] = r;
         input_image[min(x_offset + coords[i].x, BMP_HEIGTH-1)][min(y_offset + coords[i].y, BMP_HEIGTH-1)][1] = g;
@@ -122,27 +125,27 @@ void set_color(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS], const str
     }
 }
 void outputImage(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],
-                    char*  output_file_path, struct coordinate centers[],
+                    char*  output_file_path, coordinate centers[],
                     int* cellCount){
 
-    const struct coordinate red[] = {
+    const coordinate red[] = {
         {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}, {0, 8},
         {1, 2}, {2, 1}, {3, 1}, {4, 0}, {5, 0}, {6, 0},
         {7, 0}, {8, 1}, {9, 1}, {10, 2}, {11, 3}, {12, 4},
         {12, 5}, {13, 6}, {14, 7}, {14, 9}, {13, 11}, {12, 12},
         {11, 13}, {11, 14}, {11, 15}, {11, 16}, {10, 17}
     };
-    const struct coordinate blue[] = {
+    const coordinate blue[] = {
         {3, 9}, {4, 9}, {5, 8}, {6, 8}, {7, 8}, {4, 11}, {5, 11},
         {6, 10}, {7, 10}, {13, 8}, {14, 8}, {15, 8}, {16, 9}, {17, 9},
         {13, 10}, {14, 10}, {15, 11}, {16, 11}
     };
 
-    const struct coordinate black[] = {
+    const coordinate black[] = {
         {8, 5}, {8, 6}, {9, 8}, {9, 10}, {10, 5}, {10, 6}, {10, 8},
         {10, 9}, {11, 8}, {11, 10}
     };
-    struct coordinate corner;
+    coordinate corner;
     for (int j = 0; j < *cellCount; j++) {
         corner.x = max(centers[j].x - 9, 0);
         corner.y = max(centers[j].y - 9,0);
@@ -206,7 +209,7 @@ char exclusionFrame(unsigned char (*gs_image)[BMP_HEIGTH], int *x, int *y) {
     return 0;
 }
 
-void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, struct coordinate centers[]){
+void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, coordinate centers[]){
     unsigned char whiteDetected = 0;
 
     for (int x = HALF_AREA-1; x < BMP_WIDTH - HALF_AREA; x++)
