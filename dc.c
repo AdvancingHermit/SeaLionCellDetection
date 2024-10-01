@@ -112,7 +112,6 @@ void outputGSImage(unsigned char (*gs_image)[BMP_HEIGTH],
                 continue;
             }
             for (int c = 0; c < BMP_CHANNELS; c++) {
-
                 output_image[x][y][c] = gs_image[x][y] * 255;
             }
         }
@@ -257,6 +256,49 @@ void splitCells(unsigned char (*gs_image)[BMP_HEIGTH]){
     }
    // printf("%u \n",count);
     removeIslands(gs_image);
+}
+
+void findCircles(unsigned char (*gs_image)[BMP_HEIGTH]) {
+    coordinate firstSeen = {-1, 0}; // Should be low in relation to y, but should also be around peak for x
+    int yPeak = -1;
+    int yLow = -1;
+    char sameCircle = 0;
+    int sameX = 0;
+    for (int x = 0; x < BMP_WIDTH; x++) {
+        for (int y = 0; y < BMP_HEIGTH; y++) {
+            sameCircle = 0;
+            if (gs_image[x][y] == 1 && firstSeen.x == -1) {
+                sameCircle = 1;
+                firstSeen.x = x;
+                firstSeen.y = y;
+            }
+            else if (gs_image[x][y] == 1) {
+                sameCircle = 1;
+                if (y > firstSeen.y + 4 && y > yPeak) {
+                    yPeak = y;
+                }
+                else if (yPeak != -1 && y < yPeak - 3) {
+                    yLow = y;
+                }
+                else if (yLow != -1 && y < yLow ) {
+                    yLow = y;
+                }
+                else if (yLow != -1 && y > yLow + 2) {
+                    printf("YO");
+                    for (int i = 0; i < 20; i++) {
+                        gs_image[x - 2][yLow + i] = 2;
+                    }
+                }
+                break;
+            }
+        }
+        if (!sameCircle) {
+            yPeak = -1;
+            yLow = -1;
+            firstSeen.x = -1;
+            firstSeen.y = -1;
+        }
+    }
 }
 
 

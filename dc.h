@@ -17,6 +17,6 @@ void outputImage(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],
 void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, coordinate centers[], unsigned char area);
 void splitCells(unsigned char (*gs_image)[BMP_HEIGTH]);
 void outputGSImage(unsigned char (*gs_image)[BMP_HEIGTH],char*  output_file_path);
-
+void findCircles(unsigned char (*gs_image)[BMP_HEIGTH]);
 
 #endif

@@ -73,6 +73,8 @@ int main(/*int argc, char** argv*/) {
         char done = 0;
         detectCells(gs_image, &cellCount, center, HALF_AREA+6);
         splitCells(gs_image);
+
+        findCircles(gs_image);
         outputGSImage(gs_image, gs_output_path);
 
         while (!done) {
