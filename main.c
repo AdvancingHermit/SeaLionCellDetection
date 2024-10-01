@@ -20,10 +20,7 @@
     #define END_TIMER
 #endif
 
-
 #include <string.h>
-
-
 
 //Declaring the array to store the image (unsigned char = unsigned 8 bit)
 unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
@@ -57,7 +54,7 @@ int main(/*int argc, char** argv*/) {
     char output_path[] = "output/output.bmp";
     char gs_output_path[] = "output/output_gs.bmp";
     for (int i = 0; i < 1; i++) {
-        struct coordinate center[1000];
+        coordinate center[1000];
         char str1[100] = "samples/medium/";
         char str2[20];
         sprintf(str2, "%d", i+1);
@@ -76,11 +73,12 @@ int main(/*int argc, char** argv*/) {
         char done = 0;
         detectCells(gs_image, &cellCount, center, HALF_AREA+6);
         splitCells(gs_image);
+        outputGSImage(gs_image, gs_output_path);
+
         while (!done) {
             erodeImage(gs_image, &done);
             detectCells(gs_image, &cellCount, center, HALF_AREA);
         }
-        //outputGSImage(gs_image, gs_output_path);
 
         printf("%d", cellCount);
         //Save image to file
