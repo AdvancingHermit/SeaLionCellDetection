@@ -62,7 +62,6 @@ void bwrite(BMP* bmp, char* file_name);
 void bclose(BMP* bmp);
 
 // Private function declarations
-void _throw_error(char* message);
 unsigned int _get_int_from_buffer(unsigned int bytes,
                                   unsigned int offset,
                                   unsigned char* buffer);
@@ -86,7 +85,7 @@ void read_bitmap(char * input_file_path, unsigned char output_image_array[BMP_WI
   int width = get_width(in_bmp);
   int height = get_height(in_bmp);
   if (width != BMP_WIDTH || height != BMP_HEIGTH) {
-    _throw_error("Invalid bitmap width and/or height. Must be 950x950 pixels.");
+    throw_error("Invalid bitmap width and/or height. Must be 950x950 pixels.");
   }
   if (out_bmp==NULL) {
     out_bmp = b_deep_copy(in_bmp);
@@ -110,7 +109,7 @@ void read_bitmap(char * input_file_path, unsigned char output_image_array[BMP_WI
 
 void write_bitmap(unsigned char input_image_array[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], char * output_file_path){
   if (out_bmp == NULL) {
-    _throw_error("The function 'read_bitmap' must be called at least once before calling the function 'write_bitmap'.");
+    //throw_error("The function 'read_bitmap' must be called at least once before calling the function 'write_bitmap'.");
   }
   unsigned char r;
   unsigned char g;
@@ -146,7 +145,7 @@ BMP* bopen(char* file_path)
 
     if(!_validate_file_type(bmp->file_byte_contents))
     {
-        _throw_error("Invalid file type");
+        throw_error("Invalid file type");
     }
 
     bmp->pixel_array_start = _get_pixel_array_start(bmp->file_byte_contents);
@@ -161,7 +160,7 @@ BMP* bopen(char* file_path)
 
     if(!_validate_depth(bmp->depth))
     {
-        _throw_error("Invalid file depth");
+        throw_error("Invalid file depth");
     }
 
     _populate_pixel_array(bmp);
@@ -258,12 +257,6 @@ void bclose(BMP* bmp)
 
 // Private function implementations
 
-void _throw_error(char* message)
-{
-    fprintf(stderr, "%s\n", message);
-    exit(1);
-}
-
 unsigned int _get_int_from_buffer(unsigned int bytes,
                                   unsigned int offset,
                                   unsigned char* buffer)
@@ -297,7 +290,7 @@ unsigned char* _get_file_byte_contents(FILE* fp, unsigned int file_byte_number)
 
     if (result != file_byte_number)
     {
-        _throw_error("There was a problem reading the file");
+        throw_error("There was a problem reading the file");
     }
 
 
