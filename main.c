@@ -98,6 +98,6 @@ int main(/*int argc, char** argv*/) {
 
 
 
-    //free(gs_arr);
+    free(gs_arr);
     return 0;
 }
