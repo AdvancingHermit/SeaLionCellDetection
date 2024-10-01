@@ -25,11 +25,6 @@
 #include "breader.h"
 
 
-//Declaring the array to store the image (unsigned char = unsigned 8 bit)
-unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
-unsigned char gs_image[BMP_WIDTH][BMP_HEIGTH];
-
-
 //Main function
 int main(/*int argc, char** argv*/) {
     unsigned char* gs_arr = (unsigned char*)calloc((950*950 + 8 - 1) / 8, sizeof(unsigned char));
@@ -37,7 +32,6 @@ int main(/*int argc, char** argv*/) {
         printf("Memory allocation failed!\n");
         return 1;
     }
-
 
     /*
     //argc counts how may arguments are passed
@@ -55,15 +49,8 @@ int main(/*int argc, char** argv*/) {
     printf("Example program - 02132 - A1\n");*/
 
 
-    //Load image from file
-
-   // char input_path[] = "samples/easy/3easy.bmp";
-   // char input_path[] = "samples/impossible/1impossible.bmp";
-    //char input_path[] = "samples/medium/1medium.bmp";
-
-    char input_path[] = "samples/easy/3easy.bmp";
     char output_path[] = "output/output.bmp";
-    char gs_output_path[] = "output/output_gs.bmp";
+
     for (int i = 0; i < 1; i++) {
         coordinate center[1000];
         char str1[100] = "samples/impossible/";
@@ -77,26 +64,26 @@ int main(/*int argc, char** argv*/) {
         int cellCount = 0;
         char done = 0;
 
-
-        //outputGSImage(gs_arr, gs_output_path);
-
-
-
+        //write_gs_bmp(gs_arr, str1, output_path, center, &cellCount);
         detectCells(gs_arr, &cellCount, center, HALF_AREA+6);
-        splitCells(gs_arr);
+        //splitCells(gs_arr);
         for (int i = 0; i < 20; i++) {
-            erodeImage(gs_arr, &done);
+            //erodeImage(gs_arr, &done);
             detectCells(gs_arr, &cellCount, center, HALF_AREA);
         }
-        //outputGSImage(gs_image, gs_output_path);
+
+        for (int i = 0; i < cellCount; i++) {
+            printf("%d %d \n", center[i].x, center[i].y);
+        }
 
         printf("%d", cellCount);
+
+
         //Save image to file
+
         write_bmp(gs_arr, str1, output_path, center, &cellCount);
         printf("Done!\n");
     }
-
-
 
     free(gs_arr);
     return 0;

@@ -161,6 +161,72 @@ void outputHelper(FILE* bmp_output, coordinate centers[], int* cellCount, unsign
         //set_color(input_image, centers, *cellCount, 0, 255, 0, 0, 0);
     }
 }
+void write_gs_bmp (unsigned char* gs_arr, char input_path[], char output_path[], coordinate centers[], int* cellCount) {
+    FILE* bmp_input = fopen(input_path, "rb");
+    if (bmp_input == NULL) {
+        throw_error("Could not read the input file");
+    }
+    FILE* bmp_output = fopen(output_path, "wb");
+    if (bmp_output == NULL) {
+        fclose(bmp_input);
+        throw_error("Could not read the output file");
+    }
+
+    unsigned char header[54];
+    fread(header, sizeof(unsigned char), 54, bmp_input);
+    fwrite(header, sizeof(unsigned char), 54, bmp_output);
+
+
+    unsigned int pixelDataOffset;
+    fseek(bmp_input, 10, SEEK_SET);
+    fread(&pixelDataOffset, sizeof(unsigned int), 1, bmp_input);
+
+    int width, height;
+    fseek(bmp_input, 18, SEEK_SET);
+    fread(&width, sizeof(int), 1, bmp_input);
+    fread(&height, sizeof(int), 1, bmp_input);
+
+    if (width != BMP_WIDTH || height != BMP_HEIGTH) {
+        fclose(bmp_input);
+        fclose(bmp_output);
+        throw_error("Height and width must be 950 px");
+    }
+
+    int bytesPerPixel = 3;
+
+
+    fseek(bmp_input, pixelDataOffset, SEEK_SET);
+    fseek(bmp_output, pixelDataOffset, SEEK_SET);
+    int rowSize = (width * bytesPerPixel + 3) & (~3);
+    int paddingSize = rowSize - (width * bytesPerPixel);
+
+    unsigned char pixel[3];  // Buffer for a single pixel (RGB)
+
+    // Loop through each row and pixel
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            if (GET_BIT(gs_arr, x, y)) {
+                pixel[0] = 255;
+                pixel[1] = 255;
+                pixel[2] = 255;
+            } else {
+                pixel[0] = 0;
+                pixel[1] = 0;
+                pixel[2] = 0;
+            }
+            fwrite(pixel, sizeof(unsigned char), 3, bmp_output);
+        }
+        fseek(bmp_input, paddingSize, SEEK_CUR);
+
+        for (int p = 0; p < paddingSize; p++) {
+            fputc(0x00, bmp_output);
+        }
+    }
+
+    fclose(bmp_input);
+    fclose(bmp_output);
+}
+
 
 
 void throw_error(char* message)

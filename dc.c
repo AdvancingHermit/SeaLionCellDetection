@@ -21,10 +21,11 @@ void setInputImage(unsigned char inputImageGet[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNE
 unsigned char (*getInputImageDraw())[BMP_HEIGTH][BMP_CHANNELS] {
     return inputImageDraw;
 }
+coordinate marked[950*950];
 
 void erodeImage(unsigned char* gs_arr, char* done){
     *done = 1;
-    coordinate* marked = (coordinate*) calloc(950*950, sizeof(int)*2);
+
     int counter = 0;
     for (int i = 1; i < BMP_WIDTH; i++) {
         for (int j = 1; j < BMP_HEIGTH; j++) {
@@ -44,7 +45,6 @@ void erodeImage(unsigned char* gs_arr, char* done){
    for (int i = 0; i < counter; i++) {
        CLEAR_BIT(gs_arr, marked[i].x , marked[i].y);
    }
-    free(marked);
 
 
 
@@ -124,10 +124,10 @@ void detectCells(unsigned char* gs_arr, int* cellCount, coordinate centers[], un
             }
             for (int k = (-area) + 2; k < area; k++) {
                 for (int j = (-area) + 2; j < area; j++) {
-                    if (GET_BIT(gs_arr, x + k, y + j) == 1) {
+                    if (GET_BIT(gs_arr, y + k, x + j) == 1) {
                         whiteDetected = 1;
                     }
-                    CLEAR_BIT(gs_arr, x + k, y + j);
+                    CLEAR_BIT(gs_arr, y + k, x + j);
                 }
             }
             if (whiteDetected == 1) {
