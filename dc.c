@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+
 coordinate marked[950 * 950] = {0, 0};
 void erodeImage(unsigned char* gs_arr, char* done){
     *done = 1;
@@ -70,8 +71,8 @@ void detectCells(unsigned char* gs_arr, int* cellCount, coordinate centers[], un
             }
             if (whiteDetected == 1) {
 
-                centers[*cellCount].x = x;
-                centers[*cellCount].y = y;
+                centers[*cellCount].x = x+3;
+                centers[*cellCount].y = y+3;
 
                 (*cellCount)++;
             }

@@ -20,6 +20,7 @@
 #endif
 
 #include <string.h>
+
 #include "breader.h"
 
 //Main function
@@ -47,33 +48,38 @@ int main(/*int argc, char** argv*/) {
     printf("Example program - 02132 - A1\n");*/
 
     char output_path[] = "output/output.bmp";
-    char gs_output_path[] = "output/gs_output.bmp";
-
-    for (int i = 4; i < 5; i++) {
-        coordinate center[305];
-        char str1[100] = "samples/medium/";
+    char gs_output_path1[] = "output/output_gs1.bmp";
+    char gs_output_path2[] = "output/output_gs2.bmp";
+    for (int i = 2; i < 3; i++) {
+        coordinate center[1000];
+        char str1[100] = "samples/impossible/";
         char str2[20];
         sprintf(str2, "%d", i+1);
         strcat(str1, str2);
-        strcat(str1, "medium.bmp");
+        strcat(str1, "impossible.bmp");
+        char out1[100] = "output/output";
+        char out2[20];
+        sprintf(out2, "%d", i+1);
+        strcat(out1, out2);
+        strcat(out1, ".bmp");
 
         //read_bitmap( str1, input_image);
         read_bmp(gs_arr, str1);
 
         int cellCount = 0;
         char done = 0;
-        write_gs_bmp(gs_arr, str1, gs_output_path, center, &cellCount);
+        detectCells(gs_image, &cellCount, center, HALF_AREA+6);
+        splitCells(gs_image, gs_output_path1);
+        outputGSImage(gs_image, gs_output_path2);
 
-        detectCells(gs_arr, &cellCount, center, HALF_AREA+6);
-        splitCells(gs_arr);
         while (!done) {
-            erodeImage(gs_arr, &done);
-            detectCells(gs_arr, &cellCount, center, HALF_AREA);
+            erodeImage(gs_image, &done);
+            detectCells(gs_image, &cellCount, center, HALF_AREA);
         }
-
-        write_bmp(gs_arr, str1, output_path, center, &cellCount);
-
-        printf("%u Done!\n", cellCount);
+        printf("%d", cellCount);
+        //Save image to file
+        outputImage(input_image, out1, center, &cellCount);
+        printf(" Done!\n");
     }
 
     free(gs_arr);
