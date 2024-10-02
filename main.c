@@ -19,13 +19,8 @@
     #define END_TIMER
 #endif
 
-
 #include <string.h>
 #include "breader.h"
-#include "cbmp.h"
-
-unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
-
 
 //Main function
 int main(/*int argc, char** argv*/) {
@@ -51,13 +46,11 @@ int main(/*int argc, char** argv*/) {
 
     printf("Example program - 02132 - A1\n");*/
 
-
     char output_path[] = "output/output.bmp";
     char gs_output_path[] = "output/gs_output.bmp";
 
-
     for (int i = 4; i < 5; i++) {
-        coordinate center[1000];
+        coordinate center[305];
         char str1[100] = "samples/medium/";
         char str2[20];
         sprintf(str2, "%d", i+1);
@@ -66,11 +59,6 @@ int main(/*int argc, char** argv*/) {
 
         //read_bitmap( str1, input_image);
         read_bmp(gs_arr, str1);
-
-
-
-        int numWhite = 0;
-        printf("Number of white points: %d\n", numWhite);
 
         int cellCount = 0;
         char done = 0;
@@ -83,18 +71,9 @@ int main(/*int argc, char** argv*/) {
             detectCells(gs_arr, &cellCount, center, HALF_AREA);
         }
 
-        for (int x = 0; x < cellCount; x++) {
-            printf("(%d, %d) \n", center[x].x, center[x].y);
-        }
-
-        printf("%d", cellCount);
-
-
-        //Save image to file
-
         write_bmp(gs_arr, str1, output_path, center, &cellCount);
 
-        printf("Done!\n");
+        printf("%u Done!\n", cellCount);
     }
 
     free(gs_arr);

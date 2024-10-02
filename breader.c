@@ -54,8 +54,6 @@ void read_bmp(unsigned char* gs_arr, char path[]) {
 }
 
 void write_bmp (unsigned char* gs_arr, char input_path[], char output_path[], coordinate centers[], int* cellCount) {
-
-
     FILE* bmp_input = fopen(input_path, "rb");
     if (bmp_input == NULL) {
         throw_error("Could not read the input file");
@@ -109,8 +107,6 @@ void write_bmp (unsigned char* gs_arr, char input_path[], char output_path[], co
         }
     }
     outputHelper(bmp_output, centers, cellCount, &pixelDataOffset);
-
-    printf("Made it here");
 
     fclose(bmp_input);
     fclose(bmp_output);
@@ -205,7 +201,7 @@ void write_gs_bmp (unsigned char* gs_arr, char input_path[], char output_path[],
     // Loop through each row and pixel
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
-            if (GET_BIT(gs_arr, x, y)) {
+            if (GET_BIT(gs_arr, x, (949 - y) )) {
                 pixel[0] = 255;
                 pixel[1] = 255;
                 pixel[2] = 255;
@@ -225,8 +221,6 @@ void write_gs_bmp (unsigned char* gs_arr, char input_path[], char output_path[],
     fclose(bmp_input);
     fclose(bmp_output);
 }
-
-
 
 void throw_error(char* message)
 {

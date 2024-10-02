@@ -2,32 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
-unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
-
-void greyscale(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],
-               unsigned char* gs_arr){
-    unsigned char THRESHOLD = 90;
-
-    for (int x = 0; x < BMP_WIDTH; x++)
-    {
-        for (int y = 0; y < BMP_HEIGTH; y++)
-        {
-            if (input_image[x][y][0] > THRESHOLD) {
-
-                SET_BIT(gs_arr, x, y);
-
-            } else {
-                CLEAR_BIT(gs_arr, x, y);
-            }
-
-            if (!x || !y || x == BMP_WIDTH-1 || y == BMP_HEIGTH-1) {
-                CLEAR_BIT(gs_arr, x, y);
-            }
-        }
-    }
-}
-
 coordinate marked[950 * 950] = {0, 0};
 void erodeImage(unsigned char* gs_arr, char* done){
     *done = 1;
@@ -48,7 +22,6 @@ void erodeImage(unsigned char* gs_arr, char* done){
             *done = 0;
         }
     }
-    printf("AYY: %d\n", numCont);
     for (int i = 0; i < counter; i++) {
         CLEAR_BIT(gs_arr, marked[i].x, marked[i].y);
     }
@@ -74,8 +47,6 @@ char exclusionFrame(unsigned char* gs_arr, int *x, int *y, char area) {
     }
     return 0;
 }
-
-
 
 void detectCells(unsigned char* gs_arr, int* cellCount, coordinate centers[], unsigned char area){
     char whiteDetected = 0;
@@ -173,7 +144,5 @@ void splitCells(unsigned char* gs_arr){
             }
         }
     }
-
-   // printf("%u \n",count);
     removeIslands(gs_arr);
 }
