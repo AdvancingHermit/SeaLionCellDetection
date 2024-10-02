@@ -15,7 +15,7 @@ void outputImage(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],
                     char* output_file_path, coordinate centers[],
                     int* cellCount);// Used at the end of detect cells, to output image with crosses
 void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, coordinate centers[], unsigned char area);
-void splitCells(unsigned char (*gs_image)[BMP_HEIGTH]);
+void splitCells(unsigned char (*gs_image)[BMP_HEIGTH], char* gs_output_path);
 void outputGSImage(unsigned char (*gs_image)[BMP_HEIGTH],char*  output_file_path);
 
 

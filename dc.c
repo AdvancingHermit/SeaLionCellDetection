@@ -230,7 +230,7 @@ void removeIslands(unsigned char (*gs_image)[BMP_HEIGTH]) {
     }
 }
 
-void splitCells(unsigned char (*gs_image)[BMP_HEIGTH]){
+void splitCells(unsigned char (*gs_image)[BMP_HEIGTH], char* gs_output_path){
   //  char numberOfWhites = 0;
     char count = 0;
     char onlyWhite = 1;
@@ -255,6 +255,8 @@ void splitCells(unsigned char (*gs_image)[BMP_HEIGTH]){
             }
         }
     }
+    outputGSImage(gs_image, gs_output_path);
+
    // printf("%u \n",count);
     removeIslands(gs_image);
 }

@@ -52,14 +52,15 @@ int main(/*int argc, char** argv*/) {
 //   char input_path[] = "samples/medium/1medium.bmp";
     char input_path[] = "samples/easy/3easy.bmp";
     char output_path[] = "output/output.bmp";
-    char gs_output_path[] = "output/output_gs.bmp";
+    char gs_output_path1[] = "output/output_gs1.bmp";
+    char gs_output_path2[] = "output/output_gs2.bmp";
     for (int i = 0; i < 1; i++) {
         coordinate center[1000];
-        char str1[100] = "samples/medium/";
+        char str1[100] = "samples/impossible/";
         char str2[20];
         sprintf(str2, "%d", i+1);
         strcat(str1, str2);
-        strcat(str1, "medium.bmp");
+        strcat(str1, "impossible.bmp");
 
         read_bitmap( str1, input_image);
         //greyscale image
@@ -72,8 +73,8 @@ int main(/*int argc, char** argv*/) {
         int cellCount = 0;
         char done = 0;
         detectCells(gs_image, &cellCount, center, HALF_AREA+6);
-        splitCells(gs_image);
-        outputGSImage(gs_image, gs_output_path);
+        splitCells(gs_image, gs_output_path1);
+        outputGSImage(gs_image, gs_output_path2);
 
         while (!done) {
             erodeImage(gs_image, &done);
