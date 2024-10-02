@@ -29,9 +29,11 @@ void greyscale(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],
 }
 void erodeImage(unsigned char (*gs_image)[BMP_HEIGTH], char* done){
     *done = 1;
+    int counter = 0;
     for (int i = 1; i < BMP_WIDTH; i++) {
         for (int j = 1; j < BMP_HEIGTH; j++) {
             if(gs_image[i][j] && gs_image[i-1][j] && gs_image[i+1][j] && gs_image[i][j-1] && gs_image[i][j+1]) {
+                counter+=1;
                 continue;
             }
             if (gs_image[i][j] == 3) {
@@ -45,6 +47,7 @@ void erodeImage(unsigned char (*gs_image)[BMP_HEIGTH], char* done){
         }
 
     }
+    //printf("yo %d \n",counter);
     for (int i = 1; i < BMP_WIDTH; i++) {
         for (int j = 1; j < BMP_HEIGTH; j++) {
             if(gs_image[i][j] == 2) {
