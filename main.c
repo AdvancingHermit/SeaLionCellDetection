@@ -65,32 +65,20 @@ int main(/*int argc, char** argv*/) {
         strcat(str1, "impossible.bmp");
 
         //read_bitmap( str1, input_image);
-        //read_bmp(gs_arr, str1);
+        read_bmp(gs_arr, str1);
 
-        read_bitmap(str1, input_image);
+
 
         int numWhite = 0;
-
-        for (int x = 0; x < BMP_WIDTH; x++) {
-            for (int y = BMP_HEIGTH - 1; y >= 0; y--) {
-                if(input_image[x][y][0] > 90) {
-                    SET_BIT(gs_arr, x, y);
-                    numWhite++;
-                } else {
-                    CLEAR_BIT(gs_arr, x, y);
-                }
-            }
-        }
         printf("Number of white points: %d\n", numWhite);
-
-        printf("%u Yo2 \n", GET_BIT(gs_arr, 50, 25));
 
         int cellCount = 0;
         char done = 0;
+        write_gs_bmp(gs_arr, str1, gs_output_path, center, &cellCount);
 
         detectCells(gs_arr, &cellCount, center, HALF_AREA+6);
         splitCells(gs_arr);
-        for (int x = 0; x < 20; x++) {
+        for (int x = 0; x < 12; x++) {
             erodeImage(gs_arr, &done);
             detectCells(gs_arr, &cellCount, center, HALF_AREA);
         }
@@ -105,7 +93,7 @@ int main(/*int argc, char** argv*/) {
         //Save image to file
 
         write_bmp(gs_arr, str1, output_path, center, &cellCount);
-        write_gs_bmp(gs_arr, str1, gs_output_path, center, &cellCount);
+
         printf("Done!\n");
     }
 

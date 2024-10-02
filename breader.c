@@ -46,15 +46,16 @@ void read_bmp(unsigned char* gs_arr, char path[]) {
             if (whiteness > 90) {
                 SET_BIT(gs_arr, x, y);
             }
-            fseek(bmp, 1, SEEK_CUR);
+            fseek(bmp, 2, SEEK_CUR);
         }
-
         fseek(bmp, rowSize - (width * bytesPerPixel), SEEK_CUR);
     }
     fclose(bmp);
 }
 
 void write_bmp (unsigned char* gs_arr, char input_path[], char output_path[], coordinate centers[], int* cellCount) {
+
+
     FILE* bmp_input = fopen(input_path, "rb");
     if (bmp_input == NULL) {
         throw_error("Could not read the input file");
@@ -107,7 +108,7 @@ void write_bmp (unsigned char* gs_arr, char input_path[], char output_path[], co
             fputc(0x00, bmp_output);
         }
     }
-    //outputHelper(bmp_output, centers, cellCount, &pixelDataOffset);
+    outputHelper(bmp_output, centers, cellCount, &pixelDataOffset);
 
     printf("Made it here");
 
@@ -153,8 +154,8 @@ void outputHelper(FILE* bmp_output, coordinate centers[], int* cellCount, unsign
     fseek(bmp_output, 0, SEEK_SET);
     coordinate corner;
     for (int j = 0; j < * cellCount; j++) {
-        corner.x = max(centers[j].x - 9, 0);
-        corner.y = max(centers[j].y - 9,0);
+        corner.x = max(centers[j].x - 9, 0) + 3;
+        corner.y = 949 - min(centers[j].y + 9,949) - 3;
         set_color(bmp_output, red, sizeof(red) / sizeof(red[0]), 255, 0, 0, corner.x, corner.y, pixelDataOffset);
         set_color(bmp_output, blue, sizeof(blue) / sizeof(blue[0]), 0, 0, 255, corner.x, corner.y,  pixelDataOffset);
         set_color(bmp_output, black, sizeof(black) / sizeof(black[0]), 0, 0, 0, corner.x, corner.y,  pixelDataOffset);
