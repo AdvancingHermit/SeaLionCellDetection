@@ -44,7 +44,7 @@ void read_bmp(unsigned char* gs_arr, char path[]) {
         for (int x = 0; x < width; x++) {
             fread(&whiteness, sizeof(unsigned char), 1, bmp);
             if (whiteness > 90) {
-                SET_BIT(gs_arr, x, (949-y));
+                SET_BIT(gs_arr, x, (950-y));
             }
             fseek(bmp, 2, SEEK_CUR);
         }
@@ -201,7 +201,7 @@ void write_gs_bmp (unsigned char* gs_arr, char input_path[], char output_path[],
     // Loop through each row and pixel
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
-            if (GET_BIT(gs_arr, x, (949 - y) )) {
+            if (GET_BIT(gs_arr, x, (950 - y) )) {
                 pixel[0] = 255;
                 pixel[1] = 255;
                 pixel[2] = 255;
