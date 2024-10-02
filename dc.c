@@ -96,7 +96,7 @@ void outputImage(unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS],
         set_color(input_image, red, sizeof(red) / sizeof(red[0]), 255, 0, 0, corner.x, corner.y);
         set_color(input_image, blue, sizeof(blue) / sizeof(blue[0]), 0, 0, 255, corner.x, corner.y);
         set_color(input_image, black, sizeof(black) / sizeof(black[0]), 0, 0, 0, corner.x, corner.y);
-        //set_color(input_image, centers, *cellCount, 0, 255, 0, 0, 0);
+       // set_color(input_image, centers, *cellCount, 0, 255, 0, 0, 0);
     }
 
     write_bitmap(input_image, output_file_path);
@@ -176,8 +176,8 @@ void detectCells(unsigned char (*gs_image)[BMP_HEIGTH], int* cellCount, coordina
             }
             if (whiteDetected == 1) {
 
-                centers[*cellCount].x = x;
-                centers[*cellCount].y = y;
+                centers[*cellCount].x = x+3;
+                centers[*cellCount].y = y+3;
 
                 //inclusionFrameDrawer(inputImageDraw, x, y, HALF_AREA, HALF_AREA);
 
