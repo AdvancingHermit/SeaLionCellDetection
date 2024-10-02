@@ -68,17 +68,17 @@ int main(/*int argc, char** argv*/) {
 
         int cellCount = 0;
         char done = 0;
-        detectCells(gs_image, &cellCount, center, HALF_AREA+6);
-        splitCells(gs_image, gs_output_path1);
-        outputGSImage(gs_image, gs_output_path2);
+        detectCells(gs_arr, &cellCount, center, HALF_AREA+6);
+        splitCells(gs_arr);
+        write_gs_bmp(gs_arr, str1, gs_output_path2, center, cellCount);
 
         while (!done) {
-            erodeImage(gs_image, &done);
-            detectCells(gs_image, &cellCount, center, HALF_AREA);
+            erodeImage(gs_arr, &done);
+            detectCells(gs_arr, &cellCount, center, HALF_AREA);
         }
         printf("%d", cellCount);
         //Save image to file
-        outputImage(input_image, out1, center, &cellCount);
+        write_bmp(gs_arr, str1, out1, center, &cellCount);
         printf(" Done!\n");
     }
 
