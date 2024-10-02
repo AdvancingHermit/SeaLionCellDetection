@@ -24,6 +24,9 @@ int main(/*int argc, char** argv*/)
     SET_BIT(gs_arr, temp1, temp2);
     SET_BIT(gs_arr, 0, 0);
     SET_BIT(gs_arr, 0, 1);
+    SET_BIT(gs_arr, 9, 1);
+
+    CLEAR_BIT(gs_arr, 9, 1);
 
     printf("%u \n", (1 << ((temp2 * BMP_WIDTH + temp1) % BITS_PER_BYTE)));
 
@@ -31,14 +34,9 @@ int main(/*int argc, char** argv*/)
 
     printf("%u \n", (temp2 * BMP_WIDTH + temp1) / BITS_PER_BYTE);
 
-    for (int y = 0; y < 3; y++){
-        for (int x = 0; x < 3; x++){
-            if (GET_BIT(gs_arr, x, y) >= 1){
-                printf("%u", 1);
-            }
-            else{
-                printf("%u", 0);
-            }
+    for (int y = 0; y < 10; y++){
+        for (int x = 0; x < 10; x++){
+            printf("%u", GET_BIT(gs_arr, x, y));            
         }
         printf("\n");
     }

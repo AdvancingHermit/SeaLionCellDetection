@@ -46,7 +46,7 @@ void read_bmp(unsigned char* gs_arr, char path[]) {
             if (whiteness > 90) {
                 SET_BIT(gs_arr, x, y);
             }
-            fseek(bmp, 2, SEEK_CUR);
+            fseek(bmp, 1, SEEK_CUR);
         }
 
         fseek(bmp, rowSize - (width * bytesPerPixel), SEEK_CUR);

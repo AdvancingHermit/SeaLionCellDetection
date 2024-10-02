@@ -22,8 +22,9 @@
 
 #include <string.h>
 #include "breader.h"
+#include "cbmp.h"
 
-
+unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
 
 
 //Main function
@@ -34,14 +35,6 @@ int main(/*int argc, char** argv*/) {
         printf("Memory allocation failed!\n");
         return 1;
     }
-
-    coordinate* marked = (coordinate*)calloc(950*950, sizeof(coordinate));
-
-
-    printf("%u \n", n);
-
-
-    int counter = 0;
 
     /*
     //argc counts how may arguments are passed
@@ -60,6 +53,8 @@ int main(/*int argc, char** argv*/) {
 
 
     char output_path[] = "output/output.bmp";
+    char gs_output_path[] = "output/gs_output.bmp";
+
 
     for (int i = 0; i < 1; i++) {
         coordinate center[1000];
@@ -70,22 +65,38 @@ int main(/*int argc, char** argv*/) {
         strcat(str1, "impossible.bmp");
 
         //read_bitmap( str1, input_image);
-        read_bmp(gs_arr, str1);
+        //read_bmp(gs_arr, str1);
+
+        read_bitmap(str1, input_image);
+
+        int numWhite = 0;
+
+        for (int x = 0; x < BMP_WIDTH; x++) {
+            for (int y = BMP_HEIGTH - 1; y >= 0; y--) {
+                if(input_image[x][y][0] > 90) {
+                    SET_BIT(gs_arr, x, y);
+                    numWhite++;
+                } else {
+                    CLEAR_BIT(gs_arr, x, y);
+                }
+            }
+        }
+        printf("Number of white points: %d\n", numWhite);
+
+        printf("%u Yo2 \n", GET_BIT(gs_arr, 50, 25));
+
         int cellCount = 0;
         char done = 0;
 
-        erodeImage(gs_arr, &done, marked, &counter);
-
-
-        //detectCells(gs_arr, &cellCount, center, HALF_AREA+6);
-        //splitCells(gs_arr);
-        for (int i = 0; i < 20; i++) {
-            //erodeImage(gs_arr, &done);
-            //detectCells(gs_arr, &cellCount, center, HALF_AREA);
+        detectCells(gs_arr, &cellCount, center, HALF_AREA+6);
+        splitCells(gs_arr);
+        for (int x = 0; x < 20; x++) {
+            erodeImage(gs_arr, &done);
+            detectCells(gs_arr, &cellCount, center, HALF_AREA);
         }
 
-        for (int i = 0; i < cellCount; i++) {
-            printf("%d %d \n", center[i].x, center[i].y);
+        for (int x = 0; x < cellCount; x++) {
+            printf("(%d, %d) \n", center[x].x, center[x].y);
         }
 
         printf("%d", cellCount);
@@ -94,11 +105,10 @@ int main(/*int argc, char** argv*/) {
         //Save image to file
 
         write_bmp(gs_arr, str1, output_path, center, &cellCount);
-        write_gs_bmp(gs_arr, str1, output_path, center, &cellCount);
+        write_gs_bmp(gs_arr, str1, gs_output_path, center, &cellCount);
         printf("Done!\n");
     }
 
-    free(marked);
     free(gs_arr);
     return 0;
 }
