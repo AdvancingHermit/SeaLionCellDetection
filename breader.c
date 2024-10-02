@@ -51,9 +51,7 @@ void read_bmp(unsigned char* gs_arr, char path[]) {
 
         fseek(bmp, rowSize - (width * bytesPerPixel), SEEK_CUR);
     }
-
     fclose(bmp);
-
 }
 
 void write_bmp (unsigned char* gs_arr, char input_path[], char output_path[], coordinate centers[], int* cellCount) {
@@ -109,7 +107,9 @@ void write_bmp (unsigned char* gs_arr, char input_path[], char output_path[], co
             fputc(0x00, bmp_output);
         }
     }
-    outputHelper(bmp_output, centers, cellCount, &pixelDataOffset);
+    //outputHelper(bmp_output, centers, cellCount, &pixelDataOffset);
+
+    printf("Made it here");
 
     fclose(bmp_input);
     fclose(bmp_output);
@@ -194,7 +194,6 @@ void write_gs_bmp (unsigned char* gs_arr, char input_path[], char output_path[],
 
     int bytesPerPixel = 3;
 
-
     fseek(bmp_input, pixelDataOffset, SEEK_SET);
     fseek(bmp_output, pixelDataOffset, SEEK_SET);
     int rowSize = (width * bytesPerPixel + 3) & (~3);
@@ -222,7 +221,6 @@ void write_gs_bmp (unsigned char* gs_arr, char input_path[], char output_path[],
             fputc(0x00, bmp_output);
         }
     }
-
     fclose(bmp_input);
     fclose(bmp_output);
 }

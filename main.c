@@ -6,7 +6,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "cbmp.h"
 #include "dc.h"
 #include <time.h>
 
@@ -25,13 +24,24 @@
 #include "breader.h"
 
 
+
+
 //Main function
 int main(/*int argc, char** argv*/) {
-    unsigned char* gs_arr = (unsigned char*)calloc((950*950 + 8 - 1) / 8, sizeof(unsigned char));
+    const int n = ((950*950) / 8) + 1;
+    unsigned char* gs_arr = (unsigned char*)calloc(n, sizeof(unsigned char));
     if (!gs_arr) {
         printf("Memory allocation failed!\n");
         return 1;
     }
+
+    coordinate* marked = (coordinate*)calloc(950*950, sizeof(coordinate));
+
+
+    printf("%u \n", n);
+
+
+    int counter = 0;
 
     /*
     //argc counts how may arguments are passed
@@ -64,12 +74,14 @@ int main(/*int argc, char** argv*/) {
         int cellCount = 0;
         char done = 0;
 
-        //write_gs_bmp(gs_arr, str1, output_path, center, &cellCount);
-        detectCells(gs_arr, &cellCount, center, HALF_AREA+6);
+        erodeImage(gs_arr, &done, marked, &counter);
+
+
+        //detectCells(gs_arr, &cellCount, center, HALF_AREA+6);
         //splitCells(gs_arr);
         for (int i = 0; i < 20; i++) {
             //erodeImage(gs_arr, &done);
-            detectCells(gs_arr, &cellCount, center, HALF_AREA);
+            //detectCells(gs_arr, &cellCount, center, HALF_AREA);
         }
 
         for (int i = 0; i < cellCount; i++) {
@@ -82,9 +94,11 @@ int main(/*int argc, char** argv*/) {
         //Save image to file
 
         write_bmp(gs_arr, str1, output_path, center, &cellCount);
+        write_gs_bmp(gs_arr, str1, output_path, center, &cellCount);
         printf("Done!\n");
     }
 
+    free(marked);
     free(gs_arr);
     return 0;
 }
