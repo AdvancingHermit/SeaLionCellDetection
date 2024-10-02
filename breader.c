@@ -44,7 +44,7 @@ void read_bmp(unsigned char* gs_arr, char path[]) {
         for (int x = 0; x < width; x++) {
             fread(&whiteness, sizeof(unsigned char), 1, bmp);
             if (whiteness > 90) {
-                SET_BIT(gs_arr, x, y);
+                SET_BIT(gs_arr, x, (949-y));
             }
             fseek(bmp, 2, SEEK_CUR);
         }
@@ -155,7 +155,7 @@ void outputHelper(FILE* bmp_output, coordinate centers[], int* cellCount, unsign
     coordinate corner;
     for (int j = 0; j < * cellCount; j++) {
         corner.x = max(centers[j].x - 9, 0) + 3;
-        corner.y = 949 - min(centers[j].y + 9,949) - 3;
+        corner.y = max(centers[j].y - 9, 0) + 3;
         set_color(bmp_output, red, sizeof(red) / sizeof(red[0]), 255, 0, 0, corner.x, corner.y, pixelDataOffset);
         set_color(bmp_output, blue, sizeof(blue) / sizeof(blue[0]), 0, 0, 255, corner.x, corner.y,  pixelDataOffset);
         set_color(bmp_output, black, sizeof(black) / sizeof(black[0]), 0, 0, 0, corner.x, corner.y,  pixelDataOffset);

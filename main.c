@@ -56,13 +56,13 @@ int main(/*int argc, char** argv*/) {
     char gs_output_path[] = "output/gs_output.bmp";
 
 
-    for (int i = 0; i < 1; i++) {
+    for (int i = 4; i < 5; i++) {
         coordinate center[1000];
-        char str1[100] = "samples/impossible/";
+        char str1[100] = "samples/medium/";
         char str2[20];
         sprintf(str2, "%d", i+1);
         strcat(str1, str2);
-        strcat(str1, "impossible.bmp");
+        strcat(str1, "medium.bmp");
 
         //read_bitmap( str1, input_image);
         read_bmp(gs_arr, str1);
@@ -78,7 +78,7 @@ int main(/*int argc, char** argv*/) {
 
         detectCells(gs_arr, &cellCount, center, HALF_AREA+6);
         splitCells(gs_arr);
-        for (int x = 0; x < 12; x++) {
+        while (!done) {
             erodeImage(gs_arr, &done);
             detectCells(gs_arr, &cellCount, center, HALF_AREA);
         }
