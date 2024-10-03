@@ -20,13 +20,11 @@
 #endif
 
 #include <string.h>
-
 #include "breader.h"
 
 //Main function
 int main(/*int argc, char** argv*/) {
-    const int n = ((950*950) / 8) + 1;
-    unsigned char* gs_arr = (unsigned char*)calloc(n, sizeof(unsigned char));
+    unsigned char* gs_arr = (unsigned char*)calloc(((950*950) / 8) + 1, sizeof(unsigned char));
     if (!gs_arr) {
         printf("Memory allocation failed!\n");
         return 1;
@@ -50,8 +48,8 @@ int main(/*int argc, char** argv*/) {
     char output_path[] = "output/output.bmp";
     char gs_output_path1[] = "output/output_gs1.bmp";
     char gs_output_path2[] = "output/output_gs2.bmp";
-    for (int i = 2; i < 3; i++) {
-        coordinate center[1000];
+    for (int16_t i = 2; i < 3; i++) {
+        coordinate center[305];
         char str1[100] = "samples/impossible/";
         char str2[20];
         sprintf(str2, "%d", i+1);
@@ -66,7 +64,7 @@ int main(/*int argc, char** argv*/) {
         //read_bitmap( str1, input_image);
         read_bmp(gs_arr, str1);
 
-        int cellCount = 0;
+        int16_t cellCount = 0;
         char done = 0;
         detectCells(gs_arr, &cellCount, center, HALF_AREA+6);
         splitCells(gs_arr);

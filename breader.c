@@ -12,7 +12,7 @@ int max(int a, int b) {
     return a > b ? a : b;
 }
 
-void outputHelper(FILE* bmp_output, coordinate centers[], int* cellCount,  unsigned int* pixelDataOffset);
+void outputHelper(FILE* bmp_output, coordinate centers[], int16_t* cellCount,  unsigned int* pixelDataOffset);
 void read_bmp(unsigned char* gs_arr, char path[]) {
     FILE* bmp = fopen(path, "rb");
     if (bmp == NULL) {
@@ -40,8 +40,8 @@ void read_bmp(unsigned char* gs_arr, char path[]) {
 
     unsigned char whiteness;
 
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
+    for (int16_t y = 0; y < height; y++) {
+        for (int16_t x = 0; x < width; x++) {
 
             if (!x || !(949-y) || x == width-1 || (949-y) == height-1) {
                 CLEAR_BIT(gs_arr, x, (949-y));
@@ -61,7 +61,7 @@ void read_bmp(unsigned char* gs_arr, char path[]) {
     fclose(bmp);
 }
 
-void write_bmp (unsigned char* gs_arr, char input_path[], char output_path[], coordinate centers[], int* cellCount) {
+void write_bmp (unsigned char* gs_arr, char input_path[], char output_path[], coordinate centers[], int16_t* cellCount) {
     FILE* bmp_input = fopen(input_path, "rb");
     if (bmp_input == NULL) {
         throw_error("Could not read the input file");
@@ -136,7 +136,7 @@ void set_color(FILE* bmp_output, coordinate coords[], int size, char r, char g, 
 
 }
 
-void outputHelper(FILE* bmp_output, coordinate centers[], int* cellCount, unsigned int* pixelDataOffset){
+void outputHelper(FILE* bmp_output, coordinate centers[], int16_t* cellCount, unsigned int* pixelDataOffset){
 
     coordinate red[] = {
         {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}, {0, 8},
@@ -157,7 +157,7 @@ void outputHelper(FILE* bmp_output, coordinate centers[], int* cellCount, unsign
     };
     fseek(bmp_output, 0, SEEK_SET);
     coordinate corner;
-    for (int j = 0; j < * cellCount; j++) {
+    for (int16_t j = 0; j < (*cellCount); j++) {
         corner.x = max(centers[j].x - 9, 0) + 3;
         corner.y = max(centers[j].y - 9, 0) + 3;
         set_color(bmp_output, red, sizeof(red) / sizeof(red[0]), 255, 0, 0, corner.x, corner.y, pixelDataOffset);
@@ -166,7 +166,7 @@ void outputHelper(FILE* bmp_output, coordinate centers[], int* cellCount, unsign
         //set_color(input_image, centers, *cellCount, 0, 255, 0, 0, 0);
     }
 }
-void write_gs_bmp (unsigned char* gs_arr, char input_path[], char output_path[], coordinate centers[], int* cellCount) {
+void write_gs_bmp (unsigned char* gs_arr, char input_path[], char output_path[], coordinate centers[], int16_t* cellCount) {
     FILE* bmp_input = fopen(input_path, "rb");
     if (bmp_input == NULL) {
         throw_error("Could not read the input file");
@@ -207,8 +207,8 @@ void write_gs_bmp (unsigned char* gs_arr, char input_path[], char output_path[],
     unsigned char pixel[3];  // Buffer for a single pixel (RGB)
 
     // Loop through each row and pixel
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
+    for (int16_t y = 0; y < height; y++) {
+        for (int16_t x = 0; x < width; x++) {
             if (GET_BIT(gs_arr, x, (949 - y) )) {
                 pixel[0] = 255;
                 pixel[1] = 255;
@@ -222,7 +222,7 @@ void write_gs_bmp (unsigned char* gs_arr, char input_path[], char output_path[],
         }
         fseek(bmp_input, paddingSize, SEEK_CUR);
 
-        for (int p = 0; p < paddingSize; p++) {
+        for (int16_t p = 0; p < paddingSize; p++) {
             fputc(0x00, bmp_output);
         }
     }
