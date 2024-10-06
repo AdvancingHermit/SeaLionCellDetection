@@ -6,12 +6,8 @@
 
 #define BITS_PER_BYTE 8
 
-#define GET_BIT_NUM(arr, x, y) (arr[(( (y * BMP_WIDTH) + x) / BITS_PER_BYTE)] & (0x00 + (1 << (((( (y * BMP_WIDTH) + x))) % BITS_PER_BYTE))) )
-
-#define GET_BIT(arr, x, y) ((GET_BIT_NUM(arr, x, y) > 0) ? 1 : 0)
-
-#define SET_BIT(arr, x, y) (arr[((y * BMP_WIDTH + x) / BITS_PER_BYTE)] |= (0x00 + (1 << ((((y * BMP_WIDTH + x))) % BITS_PER_BYTE))) )
-
-#define CLEAR_BIT(arr, x, y) (arr[(y * BMP_WIDTH + x) / BITS_PER_BYTE] &= (0xff - (1 << ((((y * BMP_WIDTH + x))) % BITS_PER_BYTE))) )
+#define GET_BIT(arr, x, y) ((arr[(y*BMP_WIDTH + x) / BITS_PER_BYTE] >> (y*BMP_WIDTH + x) % BITS_PER_BYTE) & 1)
+#define SET_BIT(arr, x, y) (arr[((y * BMP_WIDTH + x) / BITS_PER_BYTE)] |= (1 << ((y*BMP_WIDTH + x) % BITS_PER_BYTE)))
+#define CLEAR_BIT(arr, x, y) (arr[(y * BMP_WIDTH + x) / BITS_PER_BYTE] &= ~(1 << ((y*BMP_WIDTH + x) % BITS_PER_BYTE)))
 
 #endif //BITOPT_H
