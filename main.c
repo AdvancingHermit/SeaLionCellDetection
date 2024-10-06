@@ -68,7 +68,9 @@ int main(/*int argc, char** argv*/) {
         char done = 0;
         detectCells(gs_arr, &cellCount, center, HALF_AREA+6);
         splitCells(gs_arr);
-        write_gs_bmp(gs_arr, str1, gs_output_path2, center, &cellCount);
+        write_gs_bmp(gs_arr, str1, gs_output_path2, center, cellCount);
+
+        printf("Memory Adress1: %p\n", gs_arr);
 
         for (int j = 0; j < 20; j++) {
             erodeImage(gs_arr, &done);
@@ -76,7 +78,7 @@ int main(/*int argc, char** argv*/) {
         }
         printf("%d", cellCount);
         //Save image to file
-        write_bmp(gs_arr, str1, out1, center, &cellCount);
+        write_bmp(gs_arr, str1, out1, center, cellCount);
         printf(" Done!\n");
     }
 

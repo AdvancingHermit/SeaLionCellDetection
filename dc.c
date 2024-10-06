@@ -103,7 +103,7 @@ void splitCellsExclusionFrame(unsigned char* gs_arr, int16_t *x, int16_t *y ) {
 }
 void removeIslands(unsigned char* gs_arr) {
     char temp = 0;
-    for (int16_t i = 0; i<4; i++) {
+    for (int8_t i = 0; i<4; i++) {
         erodeImage(gs_arr, &temp);
     }
     char area = HALF_AREA-5;
@@ -124,7 +124,8 @@ void removeIslands(unsigned char* gs_arr) {
 }
 
 void splitCells(unsigned char* gs_arr){
-  //  char numberOfWhites = 0;
+    printf("Memory Adress2: %p\n", gs_arr);
+    //  char numberOfWhites = 0;
     char count = 0;
     char onlyWhite = 1;
     char area = HALF_AREA+2;
