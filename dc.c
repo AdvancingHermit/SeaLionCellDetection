@@ -1,12 +1,15 @@
 #include "dc.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 
-coordinate marked[950 * 950] = {0, 0};
 void erodeImage(unsigned char* gs_arr, char* done){
+    coordinate marked[BMP_WIDTH * 3] = {0, 0};
     *done = 1;
-    int16_t counter = 0;
+    int8_t where = 0;
+    int8_t whereToRemove = 0;
+    int16_t pos = 0;
     for (int16_t i = 1; i < BMP_WIDTH; i++) {
         for (int16_t j = 1; j < BMP_HEIGTH; j++) {
             if(GET_BIT(gs_arr, i, j) && GET_BIT(gs_arr, (i-1), j) && GET_BIT(gs_arr, (i+1) , j) && GET_BIT(gs_arr, i, (j-1)) && GET_BIT(gs_arr, i, (j+1) )) {
@@ -15,16 +18,22 @@ void erodeImage(unsigned char* gs_arr, char* done){
             if (GET_BIT(gs_arr, i, j) == 0) {
                 continue;
             }
-            marked[counter].x = i;
-            marked[counter].y = j;
-            (counter)++;
+            marked[where * BMP_WIDTH + j].x = i;
+            marked[where * BMP_WIDTH + j].y = j;
             *done = 0;
         }
+        if (i >= 3) {
+            for (int16_t k = 0; k < BMP_WIDTH; k++) {
+                pos = whereToRemove * BMP_WIDTH + k;
+                CLEAR_BIT(gs_arr, marked[pos].x, marked[pos].y);
+                marked[pos].x = 0;
+                marked[pos].y = 0;
+            }
+            whereToRemove = (whereToRemove + 1) % 3;
+        }
+        where = (where + 1) % 3;
     }
-    for (int16_t i = 0; i < counter; i++) {
-        CLEAR_BIT(gs_arr, marked[i].x, marked[i].y);
-    }
-} //gs = greyscaled.
+}
 
 char exclusionFrame(unsigned char* gs_arr, int16_t *x, int16_t *y, char area) {
 
