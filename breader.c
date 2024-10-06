@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 int min(int a, int b) {
     return a > b ? b : a;
 }
@@ -13,8 +12,8 @@ int max(int a, int b) {
 }
 
 void outputHelper(FILE* bmp_output, coordinate centers[], int16_t cellCount, int8_t pixelDataOffset);
-void read_bmp(unsigned char* gs_arr, char path[]) { // 0
-    FILE* bmp = fopen(path, "rb"); // 8
+void read_bmp(unsigned char* gs_arr, char path[]) {
+    FILE* bmp = fopen(path, "rb");
     if (bmp == NULL) {
         throw_error("Could not read the file");
     }
@@ -39,7 +38,7 @@ void read_bmp(unsigned char* gs_arr, char path[]) { // 0
 
     int16_t rowSize = (width * bytesPerPixel + 3) & (~3);
 
-    unsigned char whiteness; // 17
+    unsigned char whiteness;
 
     for (int16_t y = 0; y < height; y++) {
         for (int16_t x = 0; x < width; x++) {
@@ -50,7 +49,7 @@ void read_bmp(unsigned char* gs_arr, char path[]) { // 0
                 continue;
             }
 
-            fread(&whiteness, sizeof(unsigned char), 1, bmp); // 29
+            fread(&whiteness, sizeof(unsigned char), 1, bmp);
 
             if (whiteness > 90) {
                 SET_BIT(gs_arr, x, (949-y));
@@ -73,7 +72,7 @@ void write_bmp (unsigned char* gs_arr, char input_path[], char output_path[], co
         throw_error("Could not read the output file");
     }
 
-    unsigned char* header = (unsigned char*)calloc(54, sizeof(unsigned char)); // 55 + 17 = 72
+    unsigned char* header = (unsigned char*)calloc(54, sizeof(unsigned char));
     fread(header, sizeof(unsigned char), 54, bmp_input);
     fwrite(header, sizeof(unsigned char), 54, bmp_output);
     free(header);
@@ -102,13 +101,12 @@ void write_bmp (unsigned char* gs_arr, char input_path[], char output_path[], co
     int16_t rowSize = (width * bytesPerPixel + 3) & (~3);
     int16_t paddingSize = rowSize - (width * bytesPerPixel);
 
-    unsigned char pixel[3];  // Buffer for a single pixel (RGB)
+    unsigned char pixel[3];  // arr for a single pixel (BGR)
 
-    // Loop through each row and pixel - 30 2 pointer 4 ints + 2 chars + 1 chararray
     for (int16_t y = 0; y < height; y++) {
         for (int16_t x = 0; x < width; x++) {
             fread(pixel, sizeof(unsigned char), 3, bmp_input);
-            fwrite(pixel, sizeof(unsigned char), 3, bmp_output);  // 90
+            fwrite(pixel, sizeof(unsigned char), 3, bmp_output);
         }
         fseek(bmp_input, paddingSize, SEEK_CUR);
 
@@ -116,7 +114,7 @@ void write_bmp (unsigned char* gs_arr, char input_path[], char output_path[], co
             fputc(0x00, bmp_output);
         }
     }
-    outputHelper(bmp_output, centers, cellCount, pixelDataOffset); // 259 + 32 = 291
+    outputHelper(bmp_output, centers, cellCount, pixelDataOffset);
 
     fclose(bmp_input);
     fclose(bmp_output);
@@ -127,12 +125,12 @@ typedef struct {
 } lionCoord;
 
 void set_color(FILE* bmp_output, lionCoord coords[], uint8_t size, char r, char g, char b, int16_t offsetX, int16_t offsetY, int8_t pixelDataOffset) {
-    // 7
+
     int8_t bytesPerPixel = 3;
     int16_t rowSize = (BMP_WIDTH * bytesPerPixel + 3) & (~3);
 
     // Bitmap uses BGR for some reason
-    unsigned char pixel[] = {b, g, r} ; // 14
+    unsigned char pixel[] = {b, g, r} ;
     for (int16_t i = 0; i < size; i++) {
         int pixelOffset = pixelDataOffset + ((BMP_HEIGHT - 1 - (coords[i].y + offsetY)) * rowSize) + ((coords[i].x + offsetX) * bytesPerPixel);
         fseek(bmp_output, pixelOffset, SEEK_SET);
@@ -159,84 +157,19 @@ void outputHelper(FILE* bmp_output, coordinate centers[], int16_t cellCount, int
         {8, 5}, {8, 6}, {9, 8}, {9, 10}, {10, 5}, {10, 6}, {10, 8},
         {10, 9}, {11, 8}, {11, 10}
     };
-    //228 + 3 = 231
+
     fseek(bmp_output, 0, SEEK_SET);
     coordinate corner;
-    for (int16_t j = 0; j < (cellCount); j++) { // 237
+    for (int16_t j = 0; j < (cellCount); j++) {
         corner.x = max(centers[j].x - 9, 0) + 3;
         corner.y = max(centers[j].y - 9, 0) + 3;
-        set_color(bmp_output, red, sizeof(red) / sizeof(red[0]), 255, 0, 0, corner.x, corner.y, pixelDataOffset); // 237 + 22 = 259
+        set_color(bmp_output, red, sizeof(red) / sizeof(red[0]), 255, 0, 0, corner.x, corner.y, pixelDataOffset);
         set_color(bmp_output, blue, sizeof(blue) / sizeof(blue[0]), 0, 0, 255, corner.x, corner.y,  pixelDataOffset);
         set_color(bmp_output, black, sizeof(black) / sizeof(black[0]), 0, 0, 0, corner.x, corner.y,  pixelDataOffset);
-        //set_color(input_image, centers, *cellCount, 0, 255, 0, 0, 0);
     }
 }
 
-void write_gs_bmp (unsigned char* gs_arr, char input_path[], char output_path[], coordinate centers[], int16_t cellCount) {
-    FILE* bmp_input = fopen(input_path, "rb");
-    if (bmp_input == NULL) {
-        throw_error("Could not read the input file");
-    }
-    FILE* bmp_output = fopen(output_path, "wb");
-    if (bmp_output == NULL) {
-        fclose(bmp_input);
-        throw_error("Could not read the output file");
-    }
-
-    unsigned char header[54];
-    fread(header, sizeof(unsigned char), 54, bmp_input);
-    fwrite(header, sizeof(unsigned char), 54, bmp_output);
-
-
-    unsigned int pixelDataOffset;
-    fseek(bmp_input, 10, SEEK_SET);
-    fread(&pixelDataOffset, sizeof(unsigned int), 1, bmp_input);
-
-    int width, height;
-    fseek(bmp_input, 18, SEEK_SET);
-    fread(&width, sizeof(int), 1, bmp_input);
-    fread(&height, sizeof(int), 1, bmp_input);
-
-    if (width != BMP_WIDTH || height != BMP_HEIGHT) {
-        fclose(bmp_input);
-        fclose(bmp_output);
-        throw_error("Height and width must be 950 px");
-    }
-
-    int bytesPerPixel = 3;
-
-    fseek(bmp_input, pixelDataOffset, SEEK_SET);
-    fseek(bmp_output, pixelDataOffset, SEEK_SET);
-    int rowSize = (width * bytesPerPixel + 3) & (~3);
-    int paddingSize = rowSize - (width * bytesPerPixel);
-
-    unsigned char pixel[3];  // Buffer for a single pixel (RGB)
-
-    // Loop through each row and pixel
-    for (int16_t y = 0; y < height; y++) {
-        for (int16_t x = 0; x < width; x++) {
-            if (GET_BIT(gs_arr, x, (949 - y) )) {
-                pixel[0] = 255;
-                pixel[1] = 255;
-                pixel[2] = 255;
-            } else {
-                pixel[0] = 0;
-                pixel[1] = 0;
-                pixel[2] = 0;
-            }
-            fwrite(pixel, sizeof(unsigned char), 3, bmp_output);
-        }
-        fseek(bmp_input, paddingSize, SEEK_CUR);
-
-        for (int16_t p = 0; p < paddingSize; p++) {
-            fputc(0x00, bmp_output);
-        }
-    }
-    fclose(bmp_input);
-    fclose(bmp_output);
-}
-
-void throw_error(char* message)
+void throw_error(char* message) // From the given code.
 {
     fprintf(stderr, "%s\n", message);
     exit(1);

@@ -10,4 +10,4 @@
 #define SET_BIT(arr, x, y) (arr[((y * BMP_WIDTH + x) / BITS_PER_BYTE)] |= (1 << ((y*BMP_WIDTH + x) % BITS_PER_BYTE)))
 #define CLEAR_BIT(arr, x, y) (arr[(y * BMP_WIDTH + x) / BITS_PER_BYTE] &= ~(1 << ((y*BMP_WIDTH + x) % BITS_PER_BYTE)))
 
-#endif //BITOPT_H
+#endif

@@ -1,8 +1,5 @@
 #include "dc.h"
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-
 
 void erodeImage(unsigned char* gs_arr, char* done){
     unsigned char* marked = (unsigned char*)calloc(((BMP_WIDTH*2) / 8) + 1, sizeof(unsigned char));
