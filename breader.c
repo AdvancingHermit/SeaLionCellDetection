@@ -121,8 +121,12 @@ void write_bmp (unsigned char* gs_arr, char input_path[], char output_path[], co
     fclose(bmp_input);
     fclose(bmp_output);
 }
+typedef struct {
+    int8_t x;
+    int8_t y;
+} lionCoord;
 
-void set_color(FILE* bmp_output, coordinate coords[], uint8_t size, char r, char g, char b, int16_t offsetX, int16_t offsetY, int8_t pixelDataOffset) {
+void set_color(FILE* bmp_output, lionCoord coords[], uint8_t size, char r, char g, char b, int16_t offsetX, int16_t offsetY, int8_t pixelDataOffset) {
     // 7
     int8_t bytesPerPixel = 3;
     int16_t rowSize = (BMP_WIDTH * bytesPerPixel + 3) & (~3);
@@ -135,10 +139,6 @@ void set_color(FILE* bmp_output, coordinate coords[], uint8_t size, char r, char
         fwrite(pixel, sizeof(unsigned char), 3, bmp_output);
     }
 }
-typedef struct {
-    int8_t x;
-    int8_t y;
-} lionCoord;
 
 void outputHelper(FILE* bmp_output, coordinate centers[], int16_t cellCount, int8_t pixelDataOffset){
 

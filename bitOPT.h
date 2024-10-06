@@ -1,7 +1,7 @@
 #ifndef BITOPT_H
 #define BITOPT_H
 #define BMP_WIDTH 950
-#define BMP_HEIGTH 950
+#define BMP_HEIGHT 950
 #define BMP_CHANNELS 3
 
 #define BITS_PER_BYTE 8

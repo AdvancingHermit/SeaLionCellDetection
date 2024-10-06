@@ -9,11 +9,11 @@ void erodeImage(unsigned char* gs_arr, char* done){
     char where = 0;
     *done = 1;
     for (int16_t i = 1; i < BMP_WIDTH; i++) {
-        for (int16_t j = 1; j < BMP_HEIGTH; j++) {
-            if(GET_BIT(gs_arr, i, j) && GET_BIT(gs_arr, (i-1), j) && GET_BIT(gs_arr, (i+1) , j) && GET_BIT(gs_arr, i, (j-1)) && GET_BIT(gs_arr, i, (j+1) )) {
+        for (int16_t j = 1; j < BMP_HEIGHT; j++) {
+            if (GET_BIT(gs_arr, i, j) == 0) {
                 continue;
             }
-            if (GET_BIT(gs_arr, i, j) == 0) {
+            if(GET_BIT(gs_arr, i, j) && GET_BIT(gs_arr, (i-1), j) && GET_BIT(gs_arr, (i+1) , j) && GET_BIT(gs_arr, i, (j-1)) && GET_BIT(gs_arr, i, (j+1) )) {
                 continue;
             }
             SET_BIT(marked, j, where);
@@ -57,7 +57,7 @@ void detectCells(unsigned char* gs_arr, int16_t* cellCount, coordinate centers[]
 
     for (int16_t x = area-1; x < BMP_WIDTH - area; x++)
     {
-        for (int16_t y = area-1; y < BMP_HEIGTH - area; y++)
+        for (int16_t y = area-1; y < BMP_HEIGHT - area; y++)
         {
             whiteDetected = 0;
 
@@ -109,7 +109,7 @@ void removeIslands(unsigned char* gs_arr) {
     char area = HALF_AREA-5;
     for (int16_t x = area-1; x < BMP_WIDTH - area; x++)
     {
-        for (int16_t y = area-1; y < BMP_HEIGTH - area; y++)
+        for (int16_t y = area-1; y < BMP_HEIGHT - area; y++)
         {
             if (exclusionFrame(gs_arr, &x, &y, area)) {
                 continue;
@@ -131,7 +131,7 @@ void splitCells(unsigned char* gs_arr){
     char area = HALF_AREA+2;
     for (int16_t x = area-1; x < BMP_WIDTH - area; x++)
     {
-        for (int16_t y = area-1; y < BMP_HEIGTH - area; y++)
+        for (int16_t y = area-1; y < BMP_HEIGHT - area; y++)
         {
             onlyWhite = 1;
             for (int8_t k = (-area) + 2; k < area; k++) {
