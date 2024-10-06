@@ -135,23 +135,27 @@ void set_color(FILE* bmp_output, coordinate coords[], uint8_t size, char r, char
         fwrite(pixel, sizeof(unsigned char), 3, bmp_output);
     }
 }
+typedef struct {
+    int8_t x;
+    int8_t y;
+} lionCoord;
 
 void outputHelper(FILE* bmp_output, coordinate centers[], int16_t cellCount, int8_t pixelDataOffset){
 
-    coordinate red[] = {
+    lionCoord red[] = {
         {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}, {0, 8},
         {1, 2}, {2, 1}, {3, 1}, {4, 0}, {5, 0}, {6, 0},
         {7, 0}, {8, 1}, {9, 1}, {10, 2}, {11, 3}, {12, 4},
         {12, 5}, {13, 6}, {14, 7}, {14, 9}, {13, 11}, {12, 12},
         {11, 13}, {11, 14}, {11, 15}, {11, 16}, {10, 17}
     };
-    coordinate blue[] = {
+    lionCoord blue[] = {
         {3, 9}, {4, 9}, {5, 8}, {6, 8}, {7, 8}, {4, 11}, {5, 11},
         {6, 10}, {7, 10}, {13, 8}, {14, 8}, {15, 8}, {16, 9}, {17, 9},
         {13, 10}, {14, 10}, {15, 11}, {16, 11}
     };
 
-    coordinate black[] = {
+    lionCoord black[] = {
         {8, 5}, {8, 6}, {9, 8}, {9, 10}, {10, 5}, {10, 6}, {10, 8},
         {10, 9}, {11, 8}, {11, 10}
     };
