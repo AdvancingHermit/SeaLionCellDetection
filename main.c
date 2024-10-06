@@ -70,7 +70,7 @@ int main(/*int argc, char** argv*/) {
         splitCells(gs_arr);
         write_gs_bmp(gs_arr, str1, gs_output_path2, center, &cellCount);
 
-        while (!done) {
+        for (int j = 0; j < 20; j++) {
             erodeImage(gs_arr, &done);
             detectCells(gs_arr, &cellCount, center, HALF_AREA);
         }
