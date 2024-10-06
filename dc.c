@@ -124,8 +124,6 @@ void removeIslands(unsigned char* gs_arr) {
 }
 
 void splitCells(unsigned char* gs_arr){
-    printf("Memory Adress2: %p\n", gs_arr);
-    //  char numberOfWhites = 0;
     char count = 0;
     char onlyWhite = 1;
     char area = HALF_AREA+2;

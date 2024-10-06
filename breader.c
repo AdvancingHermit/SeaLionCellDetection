@@ -29,7 +29,7 @@ void read_bmp(unsigned char* gs_arr, char path[]) { // 0
     fseek(bmp, 22, SEEK_SET);
     fread(&height, sizeof(int16_t), 1, bmp);
 
-    if (width != BMP_WIDTH || height != BMP_HEIGTH) {
+    if (width != BMP_WIDTH || height != BMP_HEIGHT) {
         throw_error("Height and width must be 950 px");
     }
 
@@ -88,7 +88,7 @@ void write_bmp (unsigned char* gs_arr, char input_path[], char output_path[], co
     fseek(bmp_input, 22, SEEK_SET);
     fread(&height, sizeof(int16_t), 1, bmp_input);
 
-    if (width != BMP_WIDTH || height != BMP_HEIGTH) {
+    if (width != BMP_WIDTH || height != BMP_HEIGHT) {
         fclose(bmp_input);
         fclose(bmp_output);
         throw_error("Height and width must be 950 px");
@@ -134,7 +134,7 @@ void set_color(FILE* bmp_output, lionCoord coords[], uint8_t size, char r, char 
     // Bitmap uses BGR for some reason
     unsigned char pixel[] = {b, g, r} ; // 14
     for (int16_t i = 0; i < size; i++) {
-        int pixelOffset = pixelDataOffset + ((BMP_HEIGTH - 1 - (coords[i].y + offsetY)) * rowSize) + ((coords[i].x + offsetX) * bytesPerPixel);
+        int pixelOffset = pixelDataOffset + ((BMP_HEIGHT - 1 - (coords[i].y + offsetY)) * rowSize) + ((coords[i].x + offsetX) * bytesPerPixel);
         fseek(bmp_output, pixelOffset, SEEK_SET);
         fwrite(pixel, sizeof(unsigned char), 3, bmp_output);
     }
@@ -159,7 +159,7 @@ void outputHelper(FILE* bmp_output, coordinate centers[], int16_t cellCount, int
         {8, 5}, {8, 6}, {9, 8}, {9, 10}, {10, 5}, {10, 6}, {10, 8},
         {10, 9}, {11, 8}, {11, 10}
     };
-    printf("size of ars %llu\n", sizeof(red)); //228 + 3 = 231
+    //228 + 3 = 231
     fseek(bmp_output, 0, SEEK_SET);
     coordinate corner;
     for (int16_t j = 0; j < (cellCount); j++) { // 237
@@ -197,7 +197,7 @@ void write_gs_bmp (unsigned char* gs_arr, char input_path[], char output_path[],
     fread(&width, sizeof(int), 1, bmp_input);
     fread(&height, sizeof(int), 1, bmp_input);
 
-    if (width != BMP_WIDTH || height != BMP_HEIGTH) {
+    if (width != BMP_WIDTH || height != BMP_HEIGHT) {
         fclose(bmp_input);
         fclose(bmp_output);
         throw_error("Height and width must be 950 px");
