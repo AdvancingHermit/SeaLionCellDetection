@@ -72,7 +72,7 @@ int main(/*int argc, char** argv*/) {
 
         printf("Memory Adress1: %p\n", gs_arr);
 
-        for (int j = 0; j < 20; j++) {
+        while (!done) {
             erodeImage(gs_arr, &done);
             detectCells(gs_arr, &cellCount, center, HALF_AREA);
         }
